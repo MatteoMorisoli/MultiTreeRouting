@@ -12,9 +12,14 @@
 #include <stdio.h>
 #include <utility>
 #include <vector>
+#include <set>
 
-typedef std::pair<std::vector<int>, std::vector<int>> edges;
+typedef std::pair<std::vector<int>, std::vector<int>> customEdges;
+struct graphInfo {
+    customEdges * edges;
+    std::set<int> * vertices;
+};
 
-edges * loadEdges(const char * filePath);
+graphInfo * loadEdges(const char * filePath);
 
 #endif /* GraphLoader_hpp */

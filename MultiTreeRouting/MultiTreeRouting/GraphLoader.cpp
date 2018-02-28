@@ -11,10 +11,8 @@
 #include <string>
 #include <fstream>
 #include <iostream>
-#include <set>
 
-
-edges * loadEdges(const char * filePath){
+graphInfo * loadEdges(const char * filePath){
     
     std::vector<int> edge1;
     std::vector<int> edge2;
@@ -38,6 +36,6 @@ edges * loadEdges(const char * filePath){
      */
     std::cout << vertices.size() << std::endl;
     std::cout << edge1.size() << " " << edge2.size() << std::endl;
-    edges *e = new edges(edge1, edge2);
-    return e;
+    graphInfo * z = new graphInfo{new customEdges(edge1, edge2), new std::set<int>(vertices)};
+    return z;
 }
