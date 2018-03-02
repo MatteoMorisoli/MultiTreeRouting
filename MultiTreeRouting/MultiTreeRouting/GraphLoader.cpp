@@ -34,8 +34,8 @@ graphInfo * loadEdges(const char * filePath){
     for (auto j = edge2.begin(); j != edge2.end(); ++j)
         std::cout << *j << ' ';
      */
-    std::cout << vertices.size() << std::endl;
-    std::cout << edge1.size() << " " << edge2.size() << std::endl;
+    //std::cout << "Number of vertices: " << vertices.size() << std::endl;
+    //std::cout << edge1.size() << " " << edge2.size() << std::endl;
     graphInfo * z = new graphInfo{new customEdges(edge1, edge2), new std::set<int>(vertices)};
     return z;
 }
