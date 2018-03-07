@@ -13,13 +13,28 @@
 #include <utility>
 #include <vector>
 #include <set>
+#include <map>
+#include <sstream>
+#include <string>
+#include <fstream>
+#include <iostream>
 
-typedef std::pair<std::vector<int>, std::vector<int>> customEdges;
-struct graphInfo {
-    customEdges * edges;
-    std::set<int> * vertices;
+using Edge = std::pair<std::string, std::string>;
+using VSet = std::set<std::string>;
+
+class GraphLoader{
+private:
+    int edgeNum;
+    int VertexNum;
+    std::vector<Edge> edges;
+    VSet verticesLabels;
+    void addPossibleVertices(std::string v1, std::string v2);
+    
+public:
+    GraphLoader(const char * filePath);
+    const int getEdgeNum();
+    const int getVertexNum();
+    const std::vector<Edge>& getEdgeList();
+    const VSet& getVerticesLabels();
 };
-
-graphInfo * loadEdges(const char * filePath);
-
 #endif /* GraphLoader_hpp */
