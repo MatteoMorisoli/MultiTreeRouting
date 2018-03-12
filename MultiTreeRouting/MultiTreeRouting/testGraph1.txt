@@ -1,4 +1,4 @@
-1 2 blablagg qfiunfiu
-2 3 efsonewfu wfiengu
-3 1 sif i wfj feu 
-4 1 f ifi
+D 1 2 blablagg qfiunfiu
+D 2 3 efsonewfu wfiengu
+D 3 1 sif i wfj feu 
+D 4 1 f ifi

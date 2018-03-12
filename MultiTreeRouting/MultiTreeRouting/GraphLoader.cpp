@@ -17,11 +17,13 @@ GraphLoader::GraphLoader(const char * filePath){
     std::string line;
     while(std::getline(readFile, line)){
         std::istringstream iss(line);
-        std::string e1, e2;
-        iss >> e1 >> e2;
-        addPossibleVertices(e1, e2);
-        edges.push_back(Edge(e1, e2));
-        edgeNum++;
+        std::string e1, e2, e3;
+        iss >> e1 >> e2 >> e3;
+        if((e1 == std::string("D")) || (e1 == std::string("I"))){
+            addPossibleVertices(e2, e3);
+            edges.push_back(Edge(e2, e3));
+            edgeNum++;
+        }
     }    
 }
 

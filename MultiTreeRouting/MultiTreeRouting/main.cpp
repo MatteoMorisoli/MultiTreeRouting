@@ -12,10 +12,6 @@
 #include "GraphLoader.hpp"
 
 using namespace boost;
-const char* test1 = "/Users/met/Documents/MultiTreeRouting/MultiTreeRouting/MultiTreeRouting/testGraph1.txt";
-const char* test2 = "/Users/met/Documents/MultiTreeRouting/MultiTreeRouting/MultiTreeRouting/testGraph2.txt";
-const char* test3 = "/Users/met/Documents/MultiTreeRouting/MultiTreeRouting/MultiTreeRouting/testGraph3.txt";
-const char* links = "/Users/met/Documents/MultiTreeRouting/topologies/map.20120301";
 
 using EdgeWeight = property<edge_weight_t, int>;
 using VertexName = property<vertex_name_t, std::string> ;
@@ -26,8 +22,7 @@ using edgeDescriptor = graph_traits<Graph>::edge_descriptor;
 int main(int argc, const char * argv[]) {
     
     //parameters to select, graph and starting node for dijsktra
-    //graphInfo *g = loadEdges(test3);
-    GraphLoader * g = new GraphLoader(test2);
+    GraphLoader * g = new GraphLoader(argv[1]);
     
     Graph graph;
     int index = 0;
