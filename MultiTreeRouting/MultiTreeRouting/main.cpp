@@ -5,8 +5,11 @@
 //  Created by Matteo Morisoli on 19.02.18.
 //  Copyright © 2018 MatteoMorisoli. All rights reserved.
 //
+#include <boost/graph/undirected_graph.hpp>
+#include <boost/graph/exterior_property.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <boost/graph/floyd_warshall_shortest.hpp>
 #include <iostream>
 #include <fstream>
 #include "GraphLoader.hpp"
@@ -18,6 +21,8 @@ using VertexName = property<vertex_name_t, std::string> ;
 using Graph = adjacency_list<setS, vecS, undirectedS, VertexName, EdgeWeight>;
 using vertexDescriptor = graph_traits<Graph>::vertex_descriptor;
 using edgeDescriptor = graph_traits<Graph>::edge_descriptor;
+using DistanceMatrix = boost::exterior_vertex_property<Graph, int>::matrix_type;
+using DistanceMatrixMap = boost::exterior_vertex_property<Graph, int>::matrix_map_type;
 
 int main(int argc, const char * argv[]) {
     
@@ -59,6 +64,20 @@ int main(int argc, const char * argv[]) {
     for(; vertexIt != vertexEnd; ++vertexIt){
         std::cout << "distance(" << verticesNames[*vertexIt] << ") = " << distances[*vertexIt] << ", ";
         std::cout << "parent(" << verticesNames[*vertexIt] << ") = " << verticesNames[parents[*vertexIt]] << std::endl;
+    }
+    
+    
+    DistanceMatrix dG(num_vertices(graph));
+    
+    floyd_warshall_all_pairs_shortest_paths(graph, dG);
+    
+    std::cout << "Distance matrix: " << std::endl;
+    for (std::size_t i = 0; i < num_vertices(graph); ++i) {
+        for (std::size_t j = i; j < num_vertices(graph); ++j) {
+            std::cout << "From vertex " << verticesNames[i] << " to " << verticesNames[j] << " : ";
+            std::cout << dG[i][j] << std::endl;
+        }
+        std::cout << std::endl;
     }
     return 0;
 }
