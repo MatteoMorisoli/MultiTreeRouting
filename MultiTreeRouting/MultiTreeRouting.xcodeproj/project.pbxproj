@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C037269A205861EC00AB4143 /* SimpleHeuristic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0372698205861EC00AB4143 /* SimpleHeuristic.cpp */; };
 		C07C79F3203AD6EE0013BD00 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C07C79F2203AD6EE0013BD00 /* main.cpp */; };
 		C07C7A01204596590013BD00 /* GraphLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C07C79FF204596590013BD00 /* GraphLoader.cpp */; };
 /* End PBXBuildFile section */
@@ -24,6 +25,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C037269620585FA100AB4143 /* Heuristic.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Heuristic.hpp; sourceTree = "<group>"; };
+		C0372698205861EC00AB4143 /* SimpleHeuristic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleHeuristic.cpp; sourceTree = "<group>"; };
+		C0372699205861EC00AB4143 /* SimpleHeuristic.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SimpleHeuristic.hpp; sourceTree = "<group>"; };
 		C07C79EF203AD6EE0013BD00 /* MultiTreeRouting */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MultiTreeRouting; sourceTree = BUILT_PRODUCTS_DIR; };
 		C07C79F2203AD6EE0013BD00 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		C07C79FA203AD7F40013BD00 /* boost_1_66_0.tar.gz */ = {isa = PBXFileReference; lastKnownFileType = archive.gzip; name = boost_1_66_0.tar.gz; path = ../../../Desktop/boost_1_66_0.tar.gz; sourceTree = "<group>"; };
@@ -64,6 +68,9 @@
 			isa = PBXGroup;
 			children = (
 				C07C79F2203AD6EE0013BD00 /* main.cpp */,
+				C037269620585FA100AB4143 /* Heuristic.hpp */,
+				C0372698205861EC00AB4143 /* SimpleHeuristic.cpp */,
+				C0372699205861EC00AB4143 /* SimpleHeuristic.hpp */,
 				C07C79FF204596590013BD00 /* GraphLoader.cpp */,
 				C07C7A00204596590013BD00 /* GraphLoader.hpp */,
 			);
@@ -137,6 +144,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C07C79F3203AD6EE0013BD00 /* main.cpp in Sources */,
+				C037269A205861EC00AB4143 /* SimpleHeuristic.cpp in Sources */,
 				C07C7A01204596590013BD00 /* GraphLoader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

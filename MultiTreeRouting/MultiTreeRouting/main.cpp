@@ -13,6 +13,7 @@
 #include <iostream>
 #include <fstream>
 #include "GraphLoader.hpp"
+#include "SimpleHeuristic.hpp"
 
 using namespace boost;
 
@@ -41,9 +42,10 @@ int main(int argc, const char * argv[]) {
     for(auto it = g->getEdgeList().begin(); it != g->getEdgeList().end(); it++){
         add_edge(mapping.at(it->first), mapping.at(it->second), weight, graph);
     }
-    std::cout << "Number of vertices in Adj_List: " << num_vertices(graph) << " and in file: " << g->getVertexNum() << std::endl;
-    std::cout << "Number of edges in Adj_List: " << num_edges(graph) << " and in file: " << g->getEdgeNum() << std::endl;
+    //std::cout << "Number of vertices in Adj_List: " << num_vertices(graph) << " and in file: " << g->getVertexNum() << std::endl;
+    //std::cout << "Number of edges in Adj_List: " << num_edges(graph) << " and in file: " << g->getEdgeNum() << std::endl;
     
+    std::cout << std::endl << "connectivity informations: " << std::endl;
     Graph::vertex_iterator vertexIt, vertexEnd;
     Graph::adjacency_iterator neighbourIt, neighbourEnd;
     tie(vertexIt, vertexEnd) = vertices(graph);
@@ -56,26 +58,32 @@ int main(int argc, const char * argv[]) {
         }
         std::cout << std::endl;
     }
-    std::vector<vertexDescriptor> parents(num_vertices(graph));
-    std::vector<int> distances(num_vertices(graph));
-    
-    dijkstra_shortest_paths(graph, 4, predecessor_map(&parents[0]).distance_map(&distances[0]));
-    tie(vertexIt, vertexEnd) = vertices(graph);
-    for(; vertexIt != vertexEnd; ++vertexIt){
-        std::cout << "distance(" << verticesNames[*vertexIt] << ") = " << distances[*vertexIt] << ", ";
-        std::cout << "parent(" << verticesNames[*vertexIt] << ") = " << verticesNames[parents[*vertexIt]] << std::endl;
-    }
-    
     
     DistanceMatrix dG(num_vertices(graph));
     
     floyd_warshall_all_pairs_shortest_paths(graph, dG);
-    
+    std::cout << std::endl;
     std::cout << "Distance matrix: " << std::endl;
     for (std::size_t i = 0; i < num_vertices(graph); ++i) {
         for (std::size_t j = i; j < num_vertices(graph); ++j) {
             std::cout << "From vertex " << verticesNames[i] << " to " << verticesNames[j] << " : ";
             std::cout << dG[i][j] << std::endl;
+        }
+        //std::cout << std::endl;
+    }
+    
+    std::cout << std::endl << "Dijkstra distances: " << std::endl;
+    std::vector<vertexDescriptor> parents(num_vertices(graph));
+    std::vector<int> distances(num_vertices(graph));
+    SimpleHeuristic * e = new SimpleHeuristic();
+    std::set<int> starterNodes = e->SimpleHeuristic::selectStartingNodes(num_vertices(graph), atoi(argv[2]));
+    for(std::set<int>::iterator it = starterNodes.begin(); it != starterNodes.end(); ++it){
+        std::cout << "starting node : " << verticesNames[*it] << std::endl;
+        dijkstra_shortest_paths(graph, *it, predecessor_map(&parents[0]).distance_map(&distances[0]));
+        tie(vertexIt, vertexEnd) = vertices(graph);
+        for(; vertexIt != vertexEnd; ++vertexIt){
+            std::cout << "distance(" << verticesNames[*vertexIt] << ") = " << distances[*vertexIt] << ", ";
+            std::cout << "parent(" << verticesNames[*vertexIt] << ") = " << verticesNames[parents[*vertexIt]] << std::endl;
         }
         std::cout << std::endl;
     }
