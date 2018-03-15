@@ -50,10 +50,10 @@ int main(int argc, const char * argv[]) {
     Graph::adjacency_iterator neighbourIt, neighbourEnd;
     tie(vertexIt, vertexEnd) = vertices(graph);
     auto verticesNames = get(vertex_name, graph);
-    for (; vertexIt != vertexEnd; ++vertexIt){
+    for(; vertexIt != vertexEnd; ++vertexIt){
         std::cout << verticesNames[*vertexIt] << " is connected with ";
         tie(neighbourIt, neighbourEnd) = adjacent_vertices(*vertexIt, graph);
-        for (; neighbourIt != neighbourEnd; ++neighbourIt){
+        for(; neighbourIt != neighbourEnd; ++neighbourIt){
             std::cout << verticesNames[*neighbourIt] << " ";
         }
         std::cout << std::endl;
@@ -63,14 +63,23 @@ int main(int argc, const char * argv[]) {
     
     floyd_warshall_all_pairs_shortest_paths(graph, dG);
     std::cout << std::endl;
-    std::cout << "Distance matrix: " << std::endl;
-    for (std::size_t i = 0; i < num_vertices(graph); ++i) {
-        for (std::size_t j = i; j < num_vertices(graph); ++j) {
-            std::cout << "From vertex " << verticesNames[i] << " to " << verticesNames[j] << " : ";
-            std::cout << dG[i][j] << std::endl;
-        }
-        //std::cout << std::endl;
+    std::cout << "Distance matrix for Floyd-Warshall: " << std::endl;
+    std::cout << "       ";
+    for(int a = 0; a < num_vertices(graph); a++){
+        std::string str = verticesNames[a];
+        std::cout << str.insert(str.size(), 7-str.size(), ' ');
     }
+    std::cout << std::endl;
+    for(std::size_t i = 0; i < num_vertices(graph); ++i) {
+        std::string nameStr = verticesNames[i];
+        std::cout << nameStr.insert(nameStr.size(), 7 - nameStr.size(), ' ');
+        for(std::size_t j = 0; j < num_vertices(graph); ++j) {
+            std::string numStr = std::to_string(dG[i][j]);
+            std::cout << numStr.insert(numStr.size(), 7 - numStr.size(), ' '); ;
+        }
+        std::cout << std::endl;
+    }
+    
     
     std::cout << std::endl << "Dijkstra distances: " << std::endl;
     std::vector<vertexDescriptor> parents(num_vertices(graph));

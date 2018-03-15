@@ -11,7 +11,7 @@
 std::set<int> SimpleHeuristic::selectStartingNodes(int numVertices, int numRoots){
     std::set<int> nodes;
     boost::random::uniform_int_distribution<> dist(0, numVertices -1);
-    boost::random::mt19937 gen;
+    boost::random::mt19937 gen(std::time(0));
     while(nodes.size() < numRoots){
         nodes.insert(dist(gen));
     }
