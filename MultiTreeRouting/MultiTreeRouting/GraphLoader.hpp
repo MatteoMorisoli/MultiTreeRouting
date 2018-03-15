@@ -28,7 +28,7 @@ private:
     int VertexNum;
     std::vector<Edge> edges;
     VSet verticesLabels;
-    void addPossibleVertices(std::string v1, std::string v2);
+    void addPossibleVertices(const std::string& v1, const std::string& v2);
     
 public:
     GraphLoader(const char * filePath);

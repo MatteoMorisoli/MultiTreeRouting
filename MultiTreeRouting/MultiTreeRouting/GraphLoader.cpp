@@ -13,6 +13,7 @@ GraphLoader::GraphLoader(const char * filePath){
     edgeNum = 0;
     
     std::cout << "loading graph from file..." << filePath << std::endl;
+    //check on windows if it works
     std::ifstream readFile(filePath);
     std::string line;
     while(std::getline(readFile, line)){
@@ -21,13 +22,13 @@ GraphLoader::GraphLoader(const char * filePath){
         iss >> e1 >> e2 >> e3;
         if((e1 == std::string("D")) || (e1 == std::string("I"))){
             addPossibleVertices(e2, e3);
-            edges.push_back(Edge(e2, e3));
+            edges.emplace_back(Edge(e2, e3));
             edgeNum++;
         }
     }    
 }
 
-void GraphLoader::addPossibleVertices(std::string v1, std::string v2){
+void GraphLoader::addPossibleVertices(const std::string& v1, const std::string& v2){
     std::pair<std::set<std::string>::iterator, bool> verification1 = verticesLabels.insert(v1);
     if(verification1.second){
         VertexNum++;

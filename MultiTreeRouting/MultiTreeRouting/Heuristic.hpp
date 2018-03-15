@@ -14,7 +14,7 @@
 
 class Heuristic{
 public:
-    virtual std::set<int> selectStartingNodes(int numVertices, int numRoots) = 0;
+    virtual std::set<int> selectStartingNodes(int numVertices, int numRoots) const = 0;
 };
 
 #endif /* Heuristic_hpp */

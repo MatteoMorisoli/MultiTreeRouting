@@ -14,6 +14,6 @@
 #include "Heuristic.hpp"
 class SimpleHeuristic: public Heuristic{
 public:
-    std::set<int> selectStartingNodes(int numVertices, int numRoots);
+    std::set<int> selectStartingNodes(int numVertices, int numRoots) const;
 };
 #endif /* SimpleHeuristic_hpp */
