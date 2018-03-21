@@ -16,6 +16,7 @@
 #include <fstream>
 #include "GraphLoader.hpp"
 #include "SimpleHeuristic.hpp"
+#include "CenterHeuristic.hpp"
 #include "TreeWorker.hpp"
 #include "Printer.hpp"
 #include "MatrixLoader.hpp"
@@ -38,7 +39,7 @@ int main(int argc, const char * argv[]) {
     GraphLoader g(argv[1]);
     Graph graph;
     int index = 0;
-    //std::cout << "starting..." << std::endl;
+    std::cout << "starting..." << std::endl;
     std::map<std::string, int> mapping;
     for(auto it = g.getVerticesLabels().begin(); it != g.getVerticesLabels().end(); ++it){
         add_vertex(*it, graph);
@@ -55,7 +56,7 @@ int main(int argc, const char * argv[]) {
     if(num_vertices(graph) < atoi(argv[2])){
         return 0;
     }
-    //std::cout << "graph loaded..." << std::endl;
+    std::cout << "graph loaded..." << std::endl;
   
     
     //Print for checking that all the nodes and edges are included in adjacency list
@@ -143,11 +144,17 @@ int main(int argc, const char * argv[]) {
     std::vector<TreeDistanceMatrix> treeMatrices;
     std::vector<StretchMatrix> stretchMatrices;
     //heuristic for starting node selection
-    SimpleHeuristic e;
-    std::set<int> starters = e.SimpleHeuristic::selectStartingNodes(num_vertices(graph), atoi(argv[2]));
-    std::vector<int> starterNodes(starters.begin(), starters.end());
+    CenterHeuristic ch;
+    std::set<int> centerStarters = ch.CenterHeuristic::selectStartingNodes(num_vertices(graph), graph, atoi(argv[2]));
+    std::vector<int> centerStarterNodes(centerStarters.begin(), centerStarters.end());
+    SimpleHeuristic sh;
+    std::set<int> simpleStarters = sh.SimpleHeuristic::selectStartingNodes(num_vertices(graph), graph, atoi(argv[2]));
+    std::vector<int> simpleStarterNodes(simpleStarters.begin(), simpleStarters.end());
+    for(std::vector<int>::iterator it = centerStarterNodes.begin(); it != centerStarterNodes.end(); ++it){
+        std::cout << *it << std::endl;
+    }
     //tree creation for each starting node
-    for(std::vector<int>::iterator it = starterNodes.begin(); it != starterNodes.end(); ++it){
+    for(std::vector<int>::iterator it = centerStarterNodes.begin(); it != centerStarterNodes.end(); ++it){
         dijkstra_shortest_paths(graph, *it, predecessor_map(&parents[0]).distance_map(&distances[0]));
         std::vector<int> predecessors(parents.begin(), parents.end());
         //distance matrix and stretch matrix creation for each tree
@@ -173,9 +180,9 @@ int main(int argc, const char * argv[]) {
 //            std::cout << "distance(" << verticesNames[*vertexIt] << ") = " << distances[*vertexIt] << ", ";
 //            std::cout << "parent(" << verticesNames[*vertexIt] << ") = " << verticesNames[parents[*vertexIt]] << std::endl;
 //        }
-//        std::cout << std::endl;
+        std::cout << std::endl;
     }
-    StretchMatrix stretchStar(num_vertices(graph), num_vertices(graph));
+    StretchMatrix stretchStar(num_vertices(graph), num_vertices(graph), 0);
     for(std::vector<StretchMatrix>::iterator it = stretchMatrices.begin(); it != stretchMatrices.end(); ++it){
         stretchStar += *it;
         
@@ -185,12 +192,12 @@ int main(int argc, const char * argv[]) {
     
     //prints nicely distance matrices, stretch matrices and the S* stretch matrix
     Printer p;
-//    for(int i = 0; i < starterNodes.size(); ++i){
-//        p.printUblasTreeMatrix(treeMatrices[i], printableStrings, starterNodes[i]);
-//    }
-//    for(int i = 0; i < starterNodes.size(); ++i){
-//        p.printUblasStretchMatrix(stretchMatrices[i], printableStrings, starterNodes[i]);
-//    }
+    for(int i = 0; i < centerStarterNodes.size(); ++i){
+        p.printUblasTreeMatrix(treeMatrices[i], printableStrings, centerStarterNodes[i]);
+    }
+    for(int i = 0; i < centerStarterNodes.size(); ++i){
+        p.printUblasStretchMatrix(stretchMatrices[i], printableStrings, centerStarterNodes[i]);
+    }
     p.printUblasStretchStarMatrix(stretchStar, printableStrings);
     double min = std::numeric_limits<double>::max();
     double max = std::numeric_limits<double>::min();
@@ -208,7 +215,6 @@ int main(int argc, const char * argv[]) {
             }
         }
     }
-    int elementNum = stretchStar.size1() * stretchStar.size2();
     double mean = sum / sorted_elements.size();
     std::sort(sorted_elements.begin(), sorted_elements.end());
     double median = sorted_elements[std::floor(sorted_elements.size()/2)];

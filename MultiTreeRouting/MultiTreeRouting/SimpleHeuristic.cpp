@@ -8,7 +8,7 @@
 
 #include "SimpleHeuristic.hpp"
 
-std::set<int> SimpleHeuristic::selectStartingNodes(int numVertices, int numRoots) const{
+std::set<int> SimpleHeuristic::selectStartingNodes(int numVertices, const Graph& graph, int numRoots) const{
     std::set<int> nodes;
     boost::random::uniform_int_distribution<> dist(0, numVertices -1);
     boost::random::mt19937 gen(std::time(0));
