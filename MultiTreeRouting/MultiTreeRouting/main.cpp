@@ -18,6 +18,7 @@
 #include "SimpleHeuristic.hpp"
 #include "TreeWorker.hpp"
 #include "Printer.hpp"
+#include "MatrixLoader.hpp"
 
 using namespace boost;
 
@@ -37,6 +38,7 @@ int main(int argc, const char * argv[]) {
     GraphLoader g(argv[1]);
     Graph graph;
     int index = 0;
+    //std::cout << "starting..." << std::endl;
     std::map<std::string, int> mapping;
     for(auto it = g.getVerticesLabels().begin(); it != g.getVerticesLabels().end(); ++it){
         add_vertex(*it, graph);
@@ -53,6 +55,7 @@ int main(int argc, const char * argv[]) {
     if(num_vertices(graph) < atoi(argv[2])){
         return 0;
     }
+    //std::cout << "graph loaded..." << std::endl;
   
     
     //Print for checking that all the nodes and edges are included in adjacency list
@@ -87,30 +90,54 @@ int main(int argc, const char * argv[]) {
     
     
     //Distance matrix creation and population using Floyd-Warshall
+    //std::cout << "doing floyd..." << std::endl;
+
+    std::string matrixFile(argv[1]);
+    matrixFile.replace(matrixFile.size()-4, 4, ".dmf");
     DistanceMatrix distanceMatrix(num_vertices(graph));
-    floyd_warshall_all_pairs_shortest_paths(graph, distanceMatrix);
+    MatrixLoader ml(matrixFile);
+    if(!ml.fileExists()){
+        floyd_warshall_all_pairs_shortest_paths(graph, distanceMatrix);
+        ml.writeMatrix(distanceMatrix, num_vertices(graph));
+        std::cout << "printed!" << std::endl;
+    }else{
+        ml.readMatrix(distanceMatrix, num_vertices(graph));
+        std::cout << "Read!" << std::endl;
+    }
+    //std::cout << "floyd done!" << std::endl;
+//    std::ofstream floydFile;
+//    floydFile.open("./floyd-warshall_matrix.txt");
+//    for(int i = 0; i < num_vertices(graph); ++i){
+//        for(int j = 0; j < num_vertices(graph);  ++j){
+//            floydFile << distanceMatrix[i][j] << " ";
+//        }
+//        floydFile << std::endl;
+//    }
+//    floydFile.close();
+    //std::cout << "floyd done!" << std::endl;
     
     
     //Floyd-Warshall print of distance matrix
-//    std::cout << std::endl;
-//    std::cout << "Distance matrix for Floyd-Warshall: " << std::endl;
-//    std::cout << "       ";
-//    for(int a = 0; a < num_vertices(graph); ++a){
-//        std::string str = verticesNames[a];
-//        std::cout << str.insert(str.size(), 7-str.size(), ' ');
-//    }
-//    std::cout << std::endl;
-//    for(std::size_t i = 0; i < num_vertices(graph); ++i) {
-//        std::string nameStr = verticesNames[i];
-//        std::cout << nameStr.insert(nameStr.size(), 7 - nameStr.size(), ' ');
-//        for(std::size_t j = 0; j < num_vertices(graph); ++j) {
-//            std::string numStr = std::to_string(distanceMatrix[i][j]);
-//            std::cout << numStr.insert(numStr.size(), 7 - numStr.size(), ' '); ;
-//        }
-//        std::cout << std::endl;
-//    }
+    std::cout << std::endl;
+    std::cout << "Distance matrix for Floyd-Warshall: " << std::endl;
+    std::cout << "       ";
+    for(int a = 0; a < num_vertices(graph); ++a){
+        std::string str = verticesNames[a];
+        std::cout << str.insert(str.size(), 7-str.size(), ' ');
+    }
+    std::cout << std::endl;
+    for(std::size_t i = 0; i < num_vertices(graph); ++i) {
+        std::string nameStr = verticesNames[i];
+        std::cout << nameStr.insert(nameStr.size(), 7 - nameStr.size(), ' ');
+        for(std::size_t j = 0; j < num_vertices(graph); ++j) {
+            std::string numStr = std::to_string(distanceMatrix[i][j]);
+            std::cout << numStr.insert(numStr.size(), 7 - numStr.size(), ' '); ;
+        }
+        std::cout << std::endl;
+    }
     
     //creation of the trees and of the relative distance matrices and stretch matrices
+    
     std::vector<vertexDescriptor> parents(num_vertices(graph));
     std::vector<int> distances(num_vertices(graph));
     std::vector<TreeDistanceMatrix> treeMatrices;
@@ -125,10 +152,11 @@ int main(int argc, const char * argv[]) {
         std::vector<int> predecessors(parents.begin(), parents.end());
         //distance matrix and stretch matrix creation for each tree
         TreeWorker t(&distances, &predecessors);
-        TreeDistanceMatrix treeMatrix(num_vertices(graph), num_vertices(graph));
-        StretchMatrix stretchMatrix(num_vertices(graph), num_vertices(graph));
+        TreeDistanceMatrix treeMatrix(num_vertices(graph), num_vertices(graph), 0);
+        StretchMatrix stretchMatrix(num_vertices(graph), num_vertices(graph), 0);
         for(std::size_t i = 0; i < num_vertices(graph); ++i) {
-            for(std::size_t j = 0; j < num_vertices(graph); ++j) {
+            //std::cout << "node " << i << " of " << num_vertices(graph) << std::endl;
+            for(std::size_t j = i+1; j < num_vertices(graph); ++j) {
                 treeMatrix(i, j) = distances[i] + distances[j] - 2 * distances[t.lca(i, j)];
                 if(distanceMatrix[i][j] == 0){
                     stretchMatrix(i, j) = treeMatrix(i, j);
@@ -169,7 +197,7 @@ int main(int argc, const char * argv[]) {
     double sum = 0;
     std::vector<double> sorted_elements;
     for(int i = 0; i < stretchStar.size1(); ++i){
-        for(int j = 0; j < stretchStar.size2(); j++){
+        for(int j = i+1; j < stretchStar.size2(); j++){
             sum += stretchStar(i, j);
             sorted_elements.emplace_back(stretchStar(i, j));
             if(stretchStar(i, j) >= max){
@@ -181,9 +209,9 @@ int main(int argc, const char * argv[]) {
         }
     }
     int elementNum = stretchStar.size1() * stretchStar.size2();
-    double mean = sum / elementNum;
+    double mean = sum / sorted_elements.size();
     std::sort(sorted_elements.begin(), sorted_elements.end());
-    double median = sorted_elements[std::floor(elementNum/2)];
+    double median = sorted_elements[std::floor(sorted_elements.size()/2)];
     std::cout << "The maximum value of the matrix is: " << max << std::endl;
     std::cout << "The minimum value of the matrix is: " << min << std::endl;
     std::cout << "The mean value of the matrix is: " << mean << std::endl;

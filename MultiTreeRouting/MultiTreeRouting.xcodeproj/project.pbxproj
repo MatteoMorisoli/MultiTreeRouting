@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C036A0D720625F35001F6C73 /* MatrixLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C036A0D520625F35001F6C73 /* MatrixLoader.cpp */; };
 		C037269A205861EC00AB4143 /* SimpleHeuristic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0372698205861EC00AB4143 /* SimpleHeuristic.cpp */; };
 		C037269D205A740400AB4143 /* TreeWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C037269B205A740400AB4143 /* TreeWorker.cpp */; };
 		C03726A0205AFF2300AB4143 /* Printer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C037269E205AFF2300AB4143 /* Printer.cpp */; };
@@ -27,6 +28,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C036A0D520625F35001F6C73 /* MatrixLoader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MatrixLoader.cpp; sourceTree = "<group>"; };
+		C036A0D620625F35001F6C73 /* MatrixLoader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MatrixLoader.hpp; sourceTree = "<group>"; };
 		C037269620585FA100AB4143 /* Heuristic.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Heuristic.hpp; sourceTree = "<group>"; };
 		C0372698205861EC00AB4143 /* SimpleHeuristic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleHeuristic.cpp; sourceTree = "<group>"; };
 		C0372699205861EC00AB4143 /* SimpleHeuristic.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SimpleHeuristic.hpp; sourceTree = "<group>"; };
@@ -74,6 +77,8 @@
 			isa = PBXGroup;
 			children = (
 				C07C79F2203AD6EE0013BD00 /* main.cpp */,
+				C036A0D520625F35001F6C73 /* MatrixLoader.cpp */,
+				C036A0D620625F35001F6C73 /* MatrixLoader.hpp */,
 				C037269B205A740400AB4143 /* TreeWorker.cpp */,
 				C037269C205A740400AB4143 /* TreeWorker.hpp */,
 				C037269620585FA100AB4143 /* Heuristic.hpp */,
@@ -154,6 +159,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C03726A0205AFF2300AB4143 /* Printer.cpp in Sources */,
+				C036A0D720625F35001F6C73 /* MatrixLoader.cpp in Sources */,
 				C07C79F3203AD6EE0013BD00 /* main.cpp in Sources */,
 				C037269D205A740400AB4143 /* TreeWorker.cpp in Sources */,
 				C037269A205861EC00AB4143 /* SimpleHeuristic.cpp in Sources */,

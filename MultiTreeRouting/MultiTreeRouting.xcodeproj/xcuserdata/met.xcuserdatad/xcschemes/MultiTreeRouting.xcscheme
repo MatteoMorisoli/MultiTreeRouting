@@ -69,6 +69,10 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "/Users/met/Desktop/cycle-aslinks.l7.t2.c005343.20170101.txt"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "5"
             isEnabled = "YES">
          </CommandLineArgument>
