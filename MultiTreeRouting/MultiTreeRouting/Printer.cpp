@@ -60,3 +60,24 @@ void Printer::printUblasStretchStarMatrix(StretchMatrix m, std::vector<std::stri
         std::cout << std::endl;
     }
 }
+
+void Printer::printTreeCongestion(Congestion c, std::vector<std::string> names, std::string filePath, int sourceNode)const{
+    std::vector<std::string> colors;
+    colors.emplace_back("#000000");
+    colors.emplace_back("#000000");
+    colors.emplace_back("#550000");
+    colors.emplace_back("#AA0000");
+    colors.emplace_back("#FF0000");
+    colors.emplace_back("#FF0000");
+    
+    std::ofstream dotFile(filePath.replace(filePath.size()-4, 5, std::to_string(sourceNode) + ".dot"));
+    dotFile << "graph D {\n";
+    dotFile << "  graph[label=\"congestion on tree with root " << names[sourceNode] << "\"];\n";
+    for(int i = 0; i < names.size(); ++i){
+        dotFile << i << " [label=\"" << names[i] << "\"];\n";
+    }
+    for(int j = 0; j < c.edges.size(); ++j){
+        dotFile << c.edges[j].first << " -- " << c.edges[j].second << "[label=\"" << c.congestionValues[j] << "\"" << ", color=\"" << colors[c.congestionValues[j]] << "\", penwidth=3];\n";
+    }
+    dotFile << "}\n";
+}

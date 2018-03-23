@@ -8,46 +8,90 @@
 
 #include "TreeWorker.hpp"
 
-TreeWorker::TreeWorker(std::vector<int>* dV, std::vector<int>* pV){
-    distanceVector = dV;
-    predecessorVector = pV;
+TreeWorker::TreeWorker(const std::vector<int>& dV, const std::vector<int>& pV, const int rootNode, const Graph& graph): distanceVector(dV), predecessorVector(pV), rootNode(rootNode), graph(graph){
 }
 
 int TreeWorker::lca(int node1, int node2){
     int startingDepth;
     int newNode1 = node1;
     int newNode2 = node2;
-    if((*distanceVector)[node1] > (*distanceVector)[node2]){
-        startingDepth = (*distanceVector)[newNode2];
-        int depth1 = (*distanceVector)[newNode1];
+    if(distanceVector[node1] > distanceVector[node2]){
+        startingDepth = distanceVector[newNode2];
+        int depth1 = distanceVector[newNode1];
         while(depth1 > startingDepth){
-            //std::cout << "changing " << newNode1 << " with " << (*predecessorVector)[newNode1] << " while the other node is " << newNode2 << std::endl;
-            newNode1 = (*predecessorVector)[newNode1];
+            newNode1 = predecessorVector[newNode1];
             depth1--;
         }
-    }else if((*distanceVector)[node1] < (*distanceVector)[node2]){
-        startingDepth = (*distanceVector)[newNode1];
-        int depth2 = (*distanceVector)[newNode2];
+    }else if(distanceVector[node1] < distanceVector[node2]){
+        startingDepth = distanceVector[newNode1];
+        int depth2 = distanceVector[newNode2];
         while(depth2 > startingDepth){
-            //std::cout << "changing " << newNode2 << " with " << (*predecessorVector)[newNode2] << " while the other node is " << newNode1 << std::endl;
-            newNode2 = (*predecessorVector)[newNode2];
-            //std::cout << newNode2;
+            newNode2 = predecessorVector[newNode2];
             depth2--;
         }
     }else{
-        startingDepth = (*distanceVector)[newNode1];
+        startingDepth = distanceVector[newNode1];
     }
     while(startingDepth >= 0){
-        //std::cout << "comparing " << newNode1 << " with " << newNode2 << " at depth " << startingDepth << std::endl;
         if(newNode1 == newNode2){
             return newNode1;
         }else{
-            newNode1 = (*predecessorVector)[newNode1];
-            newNode2 = (*predecessorVector)[newNode2];
-            //std::cout << "comparing " << newNode1 << " with " << newNode2 << " at depth " << startingDepth << std::endl;
+            newNode1 = predecessorVector[newNode1];
+            newNode2 = predecessorVector[newNode2];
             startingDepth--;
         }
     }
     return newNode1;
     
+}
+
+Congestion TreeWorker::getCongestion(){
+    std::vector<std::pair<int, int>> treeEdges;
+    std::vector<std::set<int>> trees(predecessorVector.size());
+    for(int i = 0; i < predecessorVector.size(); ++i){
+        trees[predecessorVector[i]].insert(i);
+        trees[i].insert(i);
+        if(i != predecessorVector[i]){
+            treeEdges.emplace_back(std::make_pair(i, predecessorVector[i]));
+        }
+    }
+    addSubTrees(rootNode, trees);
+    std::vector<int> congestionValues;
+    for(std::vector<std::pair<int, int>>::iterator edgeIt = treeEdges.begin(); edgeIt != treeEdges.end(); ++edgeIt){
+        int root;
+        if(distanceVector[edgeIt->first] > distanceVector[edgeIt->second]){
+            root = edgeIt->first;
+        }else{
+            root = edgeIt->second;
+        }
+        int counter = 0;
+        for(std::set<int>::iterator treeNodesIt = trees[root].begin(); treeNodesIt != trees[root].end(); ++treeNodesIt){
+            std::pair<Graph::adjacency_iterator, Graph::adjacency_iterator> range = adjacent_vertices(*treeNodesIt, graph);
+            for(Graph::adjacency_iterator neighbourIt = range.first; neighbourIt != range.second; ++neighbourIt){
+                if(trees[root].find(*neighbourIt) == trees[root].end()){
+                    ++counter;
+                }
+            }
+        }
+        congestionValues.emplace_back(counter);
+    }
+//    for(int i = 0; i < treeEdges.size(); ++i){
+//        std::cout << "edge from  " << treeEdges[i].first << " to " << treeEdges[i].second << " congestion value is " << congestionValues[i] << std::endl;
+//    }
+//    std::cout << std::endl;
+    Congestion c = { treeEdges, congestionValues};
+    return c;
+}
+
+void TreeWorker::addSubTrees(const int root, std::vector<std::set<int>>& trees){
+    for(std::set<int>::iterator it = trees[root].begin(); it != trees[root].end(); ++it){
+        if(*it != root){
+            addSubTrees(*it, trees);
+        }
+    }
+    for(std::set<int>::iterator it = trees[root].begin(); it != trees[root].end(); ++it){
+        if(*it != root){
+            trees[root].insert(trees[*it].begin(), trees[*it].end());
+        }
+    }
 }

@@ -11,15 +11,31 @@
 
 #include <stdio.h>
 #include <vector>
+#include <set>
 #include <iostream>
+#include <boost/graph/adjacency_list.hpp>
+
+struct Congestion {
+    std::vector<std::pair<int, int>> edges;
+    std::vector<int> congestionValues;
+};
+
+using EdgeWeight = boost::property<boost::edge_weight_t, int>;
+using VertexName = boost::property<boost::vertex_name_t, std::string> ;
+using Graph = boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS, VertexName, EdgeWeight>;
+
 class TreeWorker{
 public:
-    TreeWorker(std::vector<int>* dV, std::vector<int>* pV);
+    TreeWorker(const std::vector<int>& dV, const std::vector<int>& pV, const int rootNode, const Graph& graph);
     int lca(int node1, int node2);
+    Congestion getCongestion();
     
 private:
-    std::vector<int>* distanceVector;
-    std::vector<int>* predecessorVector;
+    void addSubTrees(const int root, std::vector<std::set<int>>& trees);
+    const Graph& graph;
+    const int rootNode;
+    const std::vector<int>& distanceVector;
+    const std::vector<int>& predecessorVector;
 };
 
 #endif /* TreeWorker_hpp */

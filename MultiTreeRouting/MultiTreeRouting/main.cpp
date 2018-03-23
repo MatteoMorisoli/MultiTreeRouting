@@ -143,22 +143,25 @@ int main(int argc, const char * argv[]) {
     std::vector<int> distances(num_vertices(graph));
     std::vector<TreeDistanceMatrix> treeMatrices;
     std::vector<StretchMatrix> stretchMatrices;
+    std::vector<Congestion> congestions;
     //heuristic for starting node selection
-    CenterHeuristic ch;
-    std::set<int> centerStarters = ch.CenterHeuristic::selectStartingNodes(num_vertices(graph), graph, atoi(argv[2]));
-    std::vector<int> centerStarterNodes(centerStarters.begin(), centerStarters.end());
+    std::vector<int> starterNodes;
+    if(atoi(argv[3]) == 1){
+        CenterHeuristic ch;
+        std::set<int> centerStarters = ch.CenterHeuristic::selectStartingNodes(num_vertices(graph), graph, atoi(argv[2]));
+        starterNodes.insert(starterNodes.end(), centerStarters.begin(), centerStarters.end());
+    }else if(atoi(argv[3]) == 0){
     SimpleHeuristic sh;
     std::set<int> simpleStarters = sh.SimpleHeuristic::selectStartingNodes(num_vertices(graph), graph, atoi(argv[2]));
-    std::vector<int> simpleStarterNodes(simpleStarters.begin(), simpleStarters.end());
-    for(std::vector<int>::iterator it = centerStarterNodes.begin(); it != centerStarterNodes.end(); ++it){
-        std::cout << *it << std::endl;
+        starterNodes.insert(starterNodes.end(), simpleStarters.begin(), simpleStarters.end());
     }
     //tree creation for each starting node
-    for(std::vector<int>::iterator it = centerStarterNodes.begin(); it != centerStarterNodes.end(); ++it){
+    for(std::vector<int>::iterator it = starterNodes.begin(); it != starterNodes.end(); ++it){
         dijkstra_shortest_paths(graph, *it, predecessor_map(&parents[0]).distance_map(&distances[0]));
         std::vector<int> predecessors(parents.begin(), parents.end());
         //distance matrix and stretch matrix creation for each tree
-        TreeWorker t(&distances, &predecessors);
+        TreeWorker t(distances, predecessors, *it, graph);
+        congestions.emplace_back(t.getCongestion());
         TreeDistanceMatrix treeMatrix(num_vertices(graph), num_vertices(graph), 0);
         StretchMatrix stretchMatrix(num_vertices(graph), num_vertices(graph), 0);
         for(std::size_t i = 0; i < num_vertices(graph); ++i) {
@@ -180,7 +183,7 @@ int main(int argc, const char * argv[]) {
 //            std::cout << "distance(" << verticesNames[*vertexIt] << ") = " << distances[*vertexIt] << ", ";
 //            std::cout << "parent(" << verticesNames[*vertexIt] << ") = " << verticesNames[parents[*vertexIt]] << std::endl;
 //        }
-        std::cout << std::endl;
+//        std::cout << std::endl;
     }
     StretchMatrix stretchStar(num_vertices(graph), num_vertices(graph), 0);
     for(std::vector<StretchMatrix>::iterator it = stretchMatrices.begin(); it != stretchMatrices.end(); ++it){
@@ -192,11 +195,14 @@ int main(int argc, const char * argv[]) {
     
     //prints nicely distance matrices, stretch matrices and the S* stretch matrix
     Printer p;
-    for(int i = 0; i < centerStarterNodes.size(); ++i){
-        p.printUblasTreeMatrix(treeMatrices[i], printableStrings, centerStarterNodes[i]);
-    }
-    for(int i = 0; i < centerStarterNodes.size(); ++i){
-        p.printUblasStretchMatrix(stretchMatrices[i], printableStrings, centerStarterNodes[i]);
+//    for(int i = 0; i < starterNodes.size(); ++i){
+//        p.printUblasTreeMatrix(treeMatrices[i], printableStrings, starterNodes[i]);
+//    }
+//    for(int i = 0; i < starterNodes.size(); ++i){
+//        p.printUblasStretchMatrix(stretchMatrices[i], printableStrings, starterNodes[i]);
+//    }
+    for(int i = 0; i < starterNodes.size(); ++i){
+        p.printTreeCongestion(congestions[i], printableStrings, argv[1], starterNodes[i]);
     }
     p.printUblasStretchStarMatrix(stretchStar, printableStrings);
     double min = std::numeric_limits<double>::max();
