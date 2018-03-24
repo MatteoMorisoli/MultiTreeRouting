@@ -67,12 +67,12 @@ int main(int argc, const char * argv[]) {
     //retrieval of node names from adjacency list structure
     //TODO streamline retrieval of node names with adjacency list creation
     auto verticesNames = get(vertex_name, graph);
-    std::vector<std::string> printableStrings;
-    for(int a = 0; a < num_vertices(graph); ++a){
-        std::string str = verticesNames[a];
-        str.insert(str.size(), 7-str.size(), ' ');
-        printableStrings.push_back(str);
-    }
+//    std::vector<std::string> printableStrings;
+//    for(int a = 0; a < num_vertices(graph); ++a){
+//        std::string str = verticesNames[a];
+//        str.insert(str.size(), 7-str.size(), ' ');
+//        printableStrings.push_back(str);
+//    }
     
     
     //Print for connectivity informations
@@ -91,7 +91,7 @@ int main(int argc, const char * argv[]) {
     
     
     //Distance matrix creation and population using Floyd-Warshall
-    //std::cout << "doing floyd..." << std::endl;
+    std::cout << "doing floyd..." << std::endl;
 
     std::string matrixFile(argv[1]);
     matrixFile.replace(matrixFile.size()-4, 4, ".dmf");
@@ -105,7 +105,7 @@ int main(int argc, const char * argv[]) {
         ml.readMatrix(distanceMatrix, num_vertices(graph));
         std::cout << "Read!" << std::endl;
     }
-    //std::cout << "floyd done!" << std::endl;
+    std::cout << "floyd done!" << std::endl;
 //    std::ofstream floydFile;
 //    floydFile.open("./floyd-warshall_matrix.txt");
 //    for(int i = 0; i < num_vertices(graph); ++i){
@@ -119,23 +119,23 @@ int main(int argc, const char * argv[]) {
     
     
     //Floyd-Warshall print of distance matrix
-    std::cout << std::endl;
-    std::cout << "Distance matrix for Floyd-Warshall: " << std::endl;
-    std::cout << "       ";
-    for(int a = 0; a < num_vertices(graph); ++a){
-        std::string str = verticesNames[a];
-        std::cout << str.insert(str.size(), 7-str.size(), ' ');
-    }
-    std::cout << std::endl;
-    for(std::size_t i = 0; i < num_vertices(graph); ++i) {
-        std::string nameStr = verticesNames[i];
-        std::cout << nameStr.insert(nameStr.size(), 7 - nameStr.size(), ' ');
-        for(std::size_t j = 0; j < num_vertices(graph); ++j) {
-            std::string numStr = std::to_string(distanceMatrix[i][j]);
-            std::cout << numStr.insert(numStr.size(), 7 - numStr.size(), ' '); ;
-        }
-        std::cout << std::endl;
-    }
+//    std::cout << std::endl;
+//    std::cout << "Distance matrix for Floyd-Warshall: " << std::endl;
+//    std::cout << "       ";
+//    for(int a = 0; a < num_vertices(graph); ++a){
+//        std::string str = verticesNames[a];
+//        std::cout << str.insert(str.size(), 7-str.size(), ' ');
+//    }
+//    std::cout << std::endl;
+//    for(std::size_t i = 0; i < num_vertices(graph); ++i) {
+//        std::string nameStr = verticesNames[i];
+//        std::cout << nameStr.insert(nameStr.size(), 7 - nameStr.size(), ' ');
+//        for(std::size_t j = 0; j < num_vertices(graph); ++j) {
+//            std::string numStr = std::to_string(distanceMatrix[i][j]);
+//            std::cout << numStr.insert(numStr.size(), 7 - numStr.size(), ' '); ;
+//        }
+//        std::cout << std::endl;
+//    }
     
     //creation of the trees and of the relative distance matrices and stretch matrices
     
@@ -201,10 +201,10 @@ int main(int argc, const char * argv[]) {
 //    for(int i = 0; i < starterNodes.size(); ++i){
 //        p.printUblasStretchMatrix(stretchMatrices[i], printableStrings, starterNodes[i]);
 //    }
-    for(int i = 0; i < starterNodes.size(); ++i){
-        p.printTreeCongestion(congestions[i], printableStrings, argv[1], starterNodes[i]);
-    }
-    p.printUblasStretchStarMatrix(stretchStar, printableStrings);
+//    for(int i = 0; i < starterNodes.size(); ++i){
+//        p.printTreeCongestion(congestions[i], printableStrings, argv[1], starterNodes[i]);
+//    }
+//    p.printUblasStretchStarMatrix(stretchStar, printableStrings);
     double min = std::numeric_limits<double>::max();
     double max = std::numeric_limits<double>::min();
     double sum = 0;

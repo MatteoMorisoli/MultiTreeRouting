@@ -66,11 +66,11 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "/Users/met/Documents/MultiTreeRouting/MultiTreeRouting/MultiTreeRouting/testGraph3.txt"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "/Users/met/Desktop/cycle-aslinks.l7.t2.c005343.20170101.txt"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "5"
