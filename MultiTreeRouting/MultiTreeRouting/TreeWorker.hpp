@@ -15,16 +15,17 @@
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
 
+//struct to store congestion informations
 struct Congestion {
     std::vector<std::pair<int, int>> edges;
     std::vector<int> congestionValues;
 };
 
-using EdgeWeight = boost::property<boost::edge_weight_t, int>;
-using VertexName = boost::property<boost::vertex_name_t, std::string> ;
-using Graph = boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS, VertexName, EdgeWeight>;
-
+//class that works on a tree given by djikstra shortest path to compute additional informations
 class TreeWorker{
+    using EdgeWeight = boost::property<boost::edge_weight_t, int>;
+    using VertexName = boost::property<boost::vertex_name_t, std::string> ;
+    using Graph = boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS, VertexName, EdgeWeight>;
 public:
     TreeWorker(const std::vector<int>& dV, const std::vector<int>& pV, const int rootNode, const Graph& graph);
     int lca(int node1, int node2);

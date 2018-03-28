@@ -17,9 +17,9 @@ using EdgeWeight = boost::property<boost::edge_weight_t, int>;
 using VertexName = boost::property<boost::vertex_name_t, std::string> ;
 using Graph = boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS, VertexName, EdgeWeight>;
 
+//abstract interface for heuristic implementations
 class Heuristic{
 public:
-    //virtual std::set<int> selectStartingNodes(int numVertices, int numRoots) const = 0;
     virtual std::set<int> selectStartingNodes(const int numVertices, const Graph& graph, const int numRoots) const = 0;
 };
 

@@ -8,6 +8,7 @@
 
 #include "GraphLoader.hpp"
 
+//constructor, opens the file and load the graph in the object
 GraphLoader::GraphLoader(const char * filePath){
     VertexNum = 0;
     edgeNum = 0;
@@ -28,6 +29,7 @@ GraphLoader::GraphLoader(const char * filePath){
     }    
 }
 
+//worker method to check if vertices are already in set and update the vertex number accordingly
 void GraphLoader::addPossibleVertices(const std::string& v1, const std::string& v2){
     std::pair<std::set<std::string>::iterator, bool> verification1 = verticesLabels.insert(v1);
     if(verification1.second){
@@ -39,18 +41,22 @@ void GraphLoader::addPossibleVertices(const std::string& v1, const std::string& 
     }
 }
 
+//getter method for list of edges
 const std::vector<Edge>&  GraphLoader::getEdgeList(){
     return edges;
 }
 
+//getter method for set of strings representing all the vertices names
 const VSet& GraphLoader::getVerticesLabels(){
     return verticesLabels;
 }
 
+//getter for number of edges
 const int GraphLoader::getEdgeNum(){
     return edgeNum;
 }
 
+//getter for number of vertices
 const int GraphLoader::getVertexNum(){
     return VertexNum;
 }

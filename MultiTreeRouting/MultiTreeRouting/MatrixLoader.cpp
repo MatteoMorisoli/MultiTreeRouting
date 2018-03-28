@@ -12,12 +12,14 @@ MatrixLoader::MatrixLoader(std::string fileName){
     name = fileName;
 }
 
+//checks if file with given name exists or not
 bool MatrixLoader::fileExists(){
     std::ifstream infile(name);
     return infile.good();
 }
 
-void MatrixLoader::writeMatrix(const DistanceMatrix& d, const int size){
+//writes already computed all-pairs distance matrix to file
+void MatrixLoader::writeMatrix(const DistanceMatrix &d, const int size){
     std::ofstream outputFile(name);
     for(int i = 0; i < size; ++i){
         for(int j = 0; j < size; ++j){
@@ -29,6 +31,7 @@ void MatrixLoader::writeMatrix(const DistanceMatrix& d, const int size){
     }
 }
 
+//reads a file with an already computed distance matrix and loads it
 void MatrixLoader::readMatrix(DistanceMatrix &d, const int size){
     std::ifstream matrixfile(name);
     std::string line;

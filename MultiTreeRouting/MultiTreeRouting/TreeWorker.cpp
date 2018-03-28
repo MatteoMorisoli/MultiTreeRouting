@@ -8,13 +8,16 @@
 
 #include "TreeWorker.hpp"
 
+//constructor
 TreeWorker::TreeWorker(const std::vector<int>& dV, const std::vector<int>& pV, const int rootNode, const Graph& graph): distanceVector(dV), predecessorVector(pV), rootNode(rootNode), graph(graph){
 }
 
+//finds the lowest common ancestor between the two given nodes node1 and node2, returns the int of the ancestor
 int TreeWorker::lca(int node1, int node2){
     int startingDepth;
     int newNode1 = node1;
     int newNode2 = node2;
+    //start from the lowest of the 2 nodes in the tree and go up until the level of the second node is reached
     if(distanceVector[node1] > distanceVector[node2]){
         startingDepth = distanceVector[newNode2];
         int depth1 = distanceVector[newNode1];
@@ -32,6 +35,7 @@ int TreeWorker::lca(int node1, int node2){
     }else{
         startingDepth = distanceVector[newNode1];
     }
+    //having now 2 nodes at the same level, starts comparing them, if equal, return as it is the LCA, otherwise, take parents and go on
     while(startingDepth >= 0){
         if(newNode1 == newNode2){
             return newNode1;
@@ -45,6 +49,7 @@ int TreeWorker::lca(int node1, int node2){
     
 }
 
+//compute the congestion value for each edge of the tree
 Congestion TreeWorker::getCongestion(){
     std::vector<std::pair<int, int>> treeEdges;
     std::vector<std::set<int>> trees(predecessorVector.size());
@@ -75,14 +80,11 @@ Congestion TreeWorker::getCongestion(){
         }
         congestionValues.emplace_back(counter);
     }
-//    for(int i = 0; i < treeEdges.size(); ++i){
-//        std::cout << "edge from  " << treeEdges[i].first << " to " << treeEdges[i].second << " congestion value is " << congestionValues[i] << std::endl;
-//    }
-//    std::cout << std::endl;
     Congestion c = { treeEdges, congestionValues};
     return c;
 }
 
+//modified DFS that computes for each vertex all the vertices that are part of its subtree
 void TreeWorker::addSubTrees(const int root, std::vector<std::set<int>>& trees){
     for(std::set<int>::iterator it = trees[root].begin(); it != trees[root].end(); ++it){
         if(*it != root){

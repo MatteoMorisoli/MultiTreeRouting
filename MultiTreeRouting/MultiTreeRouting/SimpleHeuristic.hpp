@@ -12,6 +12,8 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 #include "Heuristic.hpp"
+
+//simple heuristic, will return numRoots distinct random vertices
 class SimpleHeuristic: public Heuristic{
 public:
     std::set<int> selectStartingNodes(int numVertices, const Graph& graph, int numRoots) const;

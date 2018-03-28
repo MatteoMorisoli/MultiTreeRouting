@@ -13,12 +13,13 @@
 #include <fstream>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/exterior_property.hpp>
-using EdgeWeight = boost::property<boost::edge_weight_t, int>;
-using VertexName = boost::property<boost::vertex_name_t, std::string> ;
-using Graph = boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS, VertexName, EdgeWeight>;
-using DistanceMatrix = boost::exterior_vertex_property<Graph, int>::matrix_type;
 
+//class to write and read already computed all-pairs distance matrices from and to file
 class MatrixLoader{
+    using EdgeWeight = boost::property<boost::edge_weight_t, int>;
+    using VertexName = boost::property<boost::vertex_name_t, std::string> ;
+    using Graph = boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS, VertexName, EdgeWeight>;
+    using DistanceMatrix = boost::exterior_vertex_property<Graph, int>::matrix_type;
 private:
     std::string name;
 public:

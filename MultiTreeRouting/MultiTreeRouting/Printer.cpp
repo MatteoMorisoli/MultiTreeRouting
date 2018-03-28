@@ -8,7 +8,7 @@
 
 #include "Printer.hpp"
 
-void Printer::printUblasTreeMatrix(TreeDistanceMatrix m, std::vector<std::string> names, int root) const{
+void Printer::printUblasTreeMatrix(const TreeDistanceMatrix &m, const std::vector<std::string>& names, const int root) const{
         std::cout << "Distance matrix for Tree rooted at: " << names[root] << std::endl;
         std::cout << "       ";
         for(int i = 0; i < names.size(); ++i){
@@ -19,13 +19,13 @@ void Printer::printUblasTreeMatrix(TreeDistanceMatrix m, std::vector<std::string
             std::cout << names[i];
             for(std::size_t j = 0; j < names.size(); ++j) {
                 std::string numStr = std::to_string(m(i, j));
-                std::cout << numStr.insert(numStr.size(), 7 - numStr.size(), ' '); ;
+                std::cout << numStr.insert(numStr.size(), 7 - numStr.size(), ' ');
             }
             std::cout << std::endl;
         }
 }
 
-void Printer::printUblasStretchMatrix(StretchMatrix m, std::vector<std::string> names, int root) const{
+void Printer::printUblasStretchMatrix(const StretchMatrix &m, const std::vector<std::string>& names, const int root) const{
     std::cout << "Stretch matrix for Tree rooted at: " << names[root] << std::endl;
     std::cout << "       ";
     for(int i = 0; i < names.size(); ++i){
@@ -37,13 +37,14 @@ void Printer::printUblasStretchMatrix(StretchMatrix m, std::vector<std::string> 
         for(std::size_t j = 0; j < names.size(); ++j) {
             std::string numStr = std::to_string(m(i, j));
             numStr.resize(5);
-            std::cout << numStr.insert(numStr.size(), 7 - numStr.size(), ' '); ;
+            std::cout << numStr.insert(numStr.size(), 7 - numStr.size(), ' ');
         }
         std::cout << std::endl;
     }
 }
 
-void Printer::printUblasStretchStarMatrix(StretchMatrix m, std::vector<std::string> names) const{
+
+void Printer::printUblasStretchStarMatrix(const StretchMatrix& m, const std::vector<std::string>& names) const{
     std::cout << "Average stretch matrix : " << std::endl;
     std::cout << "       ";
     for(int i = 0; i < names.size(); ++i){
@@ -55,13 +56,13 @@ void Printer::printUblasStretchStarMatrix(StretchMatrix m, std::vector<std::stri
         for(std::size_t j = 0; j < names.size(); ++j) {
             std::string numStr = std::to_string(m(i, j));
             numStr.resize(5);
-            std::cout << numStr.insert(numStr.size(), 7 - numStr.size(), ' '); ;
+            std::cout << numStr.insert(numStr.size(), 7 - numStr.size(), ' ');
         }
         std::cout << std::endl;
     }
 }
 
-void Printer::printTreeCongestion(Congestion c, std::vector<std::string> names, std::string filePath, int sourceNode)const{
+void Printer::printTreeCongestion(const Congestion &c, const std::vector<std::string> &names, std::string filePath, int sourceNode) const{
     std::vector<std::string> colors;
     colors.emplace_back("#000000");
     colors.emplace_back("#000000");
@@ -81,3 +82,23 @@ void Printer::printTreeCongestion(Congestion c, std::vector<std::string> names, 
     }
     dotFile << "}\n";
 }
+
+void Printer::printDistanceMatrix(const DistanceMatrix &m, const std::vector<std::string> &names) const{
+
+        std::cout << "Distance matrix for Floyd-Warshall: " << std::endl;
+        std::cout << "       ";
+    for(int i = 0; i < names.size(); ++i){
+            std::cout << names[i];
+        }
+        std::cout << std::endl;
+        for(std::size_t i = 0; i < names.size(); ++i) {
+            std::cout << names[i];
+            for(std::size_t j = 0; j < names.size(); ++j) {
+                std::string numStr = std::to_string(m[i][j]);
+                std::cout << numStr.insert(numStr.size(), 7 - numStr.size(), ' '); ;
+            }
+            std::cout << std::endl;
+        }
+}
+
+

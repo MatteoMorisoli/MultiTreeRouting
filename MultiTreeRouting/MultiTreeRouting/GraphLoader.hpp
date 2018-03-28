@@ -22,6 +22,7 @@
 using Edge = std::pair<std::string, std::string>;
 using VSet = std::set<std::string>;
 
+//this class parses the file of the graph and loads it into the program
 class GraphLoader{
 private:
     int edgeNum;
