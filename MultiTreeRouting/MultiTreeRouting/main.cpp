@@ -70,7 +70,7 @@ int main(int argc, const char * argv[]) {
     if(num_vertices(graph) < treeNum){
         return 0;
     }
-    std::cout << "graph loaded..." << std::endl;
+    std::cout << "graph loaded!" << std::endl;
     
     
     //Distance matrix creation and population using Johnson

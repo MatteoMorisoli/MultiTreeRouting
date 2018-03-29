@@ -29,6 +29,9 @@
 class Printer{
     using TreeDistanceMatrix = boost::numeric::ublas::matrix<int>;
     using StretchMatrix = boost::numeric::ublas::matrix<double>;
+    using EdgeWeight = boost::property<boost::edge_weight_t, int>;
+    using VertexName = boost::property<boost::vertex_name_t, std::string> ;
+    using Graph = boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS, VertexName, EdgeWeight>;
     using DistanceMatrix = boost::exterior_vertex_property<Graph, int>::matrix_type;
     
 public:
