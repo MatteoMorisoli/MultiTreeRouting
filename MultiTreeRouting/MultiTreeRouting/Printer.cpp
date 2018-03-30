@@ -81,6 +81,7 @@ void Printer::printTreeCongestion(const Congestion &c, const std::vector<std::st
         dotFile << c.edges[j].first << " -- " << c.edges[j].second << "[label=\"" << c.congestionValues[j] << "\"" << ", color=\"" << colors[c.congestionValues[j]] << "\", penwidth=3];\n";
     }
     dotFile << "}\n";
+    dotFile.close();
 }
 
 void Printer::printDistanceMatrix(const DistanceMatrix &m, const std::vector<std::string> &names) const{

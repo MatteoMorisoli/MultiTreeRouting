@@ -14,6 +14,7 @@
 		C03726A0205AFF2300AB4143 /* Printer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C037269E205AFF2300AB4143 /* Printer.cpp */; };
 		C07C79F3203AD6EE0013BD00 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C07C79F2203AD6EE0013BD00 /* main.cpp */; };
 		C07C7A01204596590013BD00 /* GraphLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C07C79FF204596590013BD00 /* GraphLoader.cpp */; };
+		C0F38D29206D1568003CA923 /* Writer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0F38D27206D1568003CA923 /* Writer.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -46,6 +47,8 @@
 		C07C79FC203ADCF90013BD00 /* boost_1_66_0 */ = {isa = PBXFileReference; lastKnownFileType = folder; name = boost_1_66_0; path = ../../boost_1_66_0; sourceTree = "<group>"; };
 		C07C79FF204596590013BD00 /* GraphLoader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = GraphLoader.cpp; sourceTree = "<group>"; };
 		C07C7A00204596590013BD00 /* GraphLoader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GraphLoader.hpp; sourceTree = "<group>"; };
+		C0F38D27206D1568003CA923 /* Writer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Writer.cpp; sourceTree = "<group>"; };
+		C0F38D28206D1568003CA923 /* Writer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Writer.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +96,8 @@
 				C07C7A00204596590013BD00 /* GraphLoader.hpp */,
 				C037269E205AFF2300AB4143 /* Printer.cpp */,
 				C037269F205AFF2300AB4143 /* Printer.hpp */,
+				C0F38D27206D1568003CA923 /* Writer.cpp */,
+				C0F38D28206D1568003CA923 /* Writer.hpp */,
 			);
 			path = MultiTreeRouting;
 			sourceTree = "<group>";
@@ -163,6 +168,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C0F38D29206D1568003CA923 /* Writer.cpp in Sources */,
 				C03726A0205AFF2300AB4143 /* Printer.cpp in Sources */,
 				C036A0D720625F35001F6C73 /* MatrixLoader.cpp in Sources */,
 				C07C79F3203AD6EE0013BD00 /* main.cpp in Sources */,

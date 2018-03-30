@@ -29,6 +29,7 @@ void MatrixLoader::writeMatrix(const DistanceMatrix &d, const int size){
             outputFile << std::endl;
         }
     }
+    outputFile.close();
 }
 
 //reads a file with an already computed distance matrix and loads it
