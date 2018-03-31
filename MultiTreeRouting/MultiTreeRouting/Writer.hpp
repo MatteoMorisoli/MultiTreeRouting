@@ -19,7 +19,7 @@ class Writer{
 
     
 public:
-    void writeStretchStars(std::vector<StretchMatrix> &sm, std::string filePath, const int numTrees);
+    void writeStretchStars(StretchMatrix &sm, std::string filePath, const int numTrees);
     void writeStretchStarStar(StretchMatrix &sm, std::string filePath, const int numTrees);
 };
 #endif /* Writer_hpp */

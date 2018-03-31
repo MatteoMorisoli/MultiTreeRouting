@@ -24,6 +24,7 @@
 #include <chrono>
 #include <thread>
 #include "Writer.hpp"
+#include <thread>
 
 using namespace boost;
 
@@ -37,7 +38,33 @@ using TreeDistanceMatrix = boost::numeric::ublas::matrix<int>;
 using StretchMatrix = boost::numeric::ublas::matrix<double>;
 
 //prototype
-void computeTree(const int root, const Graph& g, const DistanceMatrix &dm, std::vector<StretchMatrix> &sm, std::vector<TreeDistanceMatrix> &tdm, std::vector<Congestion> &c);
+void computeTree(const int root, const Graph& g, const DistanceMatrix &dm, StretchMatrix &sm, std::vector<Congestion> &c){
+    std::cout << "starting tree..." << std::endl;
+    int vertexNum = num_vertices(g);
+    std::vector<vertexDescriptor> parents(vertexNum); //necessary for dijkstra
+    std::vector<int> distances(vertexNum); //necessary for dijkstra
+    dijkstra_shortest_paths(g, root, predecessor_map(&parents[0]).distance_map(&distances[0]));
+    std::vector<int> predecessors(parents.begin(), parents.end());
+    TreeWorker t(distances, predecessors, root, g);
+    //c.emplace_back(t.getCongestion());
+    TreeDistanceMatrix treeMatrix(vertexNum, vertexNum, 0);
+    //StretchMatrix stretchMatrix(vertexNum, vertexNum, 0);
+    for(std::size_t i = 0; i < vertexNum; ++i) {
+        //        if(i % 20 == 0){
+        //            std::cout << i << " columns of the tree computed" << std::endl;
+        //        }
+        for(std::size_t j = i+1; j < vertexNum; ++j) {
+            treeMatrix(i, j) = distances[i] + distances[j] - 2 * distances[t.lca(i, j)];
+            if(dm[i][j] == 0){
+                sm(i, j) = treeMatrix(i, j);
+            }else{
+                sm(i, j) = treeMatrix(i, j) / (double) dm[i][j];
+            }
+        }
+    }
+    std::cout << "finished tree!" << std::endl;
+    //tdm.emplace_back(treeMatrix);
+}
 
 
 /* Parameters for the main are the path of the file containing the graph, the number of trees to create on that graph,
@@ -90,6 +117,7 @@ int main(int argc, const char * argv[]) {
         johnson_all_pairs_shortest_paths(graph, distanceMatrix);
         ml.writeMatrix(distanceMatrix, vertexNum);
     }else{
+        std::cout << "reading..." << std::endl;
         ml.readMatrix(distanceMatrix, vertexNum);
     }
     std::cout << "johnson done!" << std::endl;
@@ -97,34 +125,42 @@ int main(int argc, const char * argv[]) {
     
     //heuristic for starting node selection
     
-    
+    Writer w;
     //tree creation for each starting node, selected using the chosen heuristic
     //std::vector<StretchMatrix> stretchStars;
     StretchMatrix stretchStarStar(vertexNum, vertexNum, 0);
     for(int i = 0; i < repetitions; ++i){
+        std::cout << "starting repetition " << i+1 << " of " << repetitions << "..." << std::endl;
         //std::this_thread::sleep_for(std::chrono::milliseconds(2000));
         //creation of the trees and of the relative distance matrices and stretch matrices
-        std::vector<TreeDistanceMatrix> treeMatrices; //storage for distance between each couple of nodes on a tree
-        std::vector<StretchMatrix> stretchMatrices; //storage for the stretch matrices for each tree
+        //std::vector<TreeDistanceMatrix> treeMatrices; //storage for distance between each couple of nodes on a tree
+        //std::vector<StretchMatrix> stretchMatrices; //storage for the stretch matrices for each tree
         std::vector<Congestion> congestions; //storage of congestion informations for each tree
         std::vector<int> starterNodes;
         if(heuristicType == 1){
             CenterHeuristic h;
             std::set<int> simpleStarters = h.CenterHeuristic::selectStartingNodes(vertexNum, graph, treeNum);
             starterNodes.insert(starterNodes.end(), simpleStarters.begin(), simpleStarters.end());
+            std::cout << "Heuristic chosen: center" << std::endl;
         }else if(heuristicType == 0){
             SimpleHeuristic h;
             std::set<int> simpleStarters = h.SimpleHeuristic::selectStartingNodes(vertexNum, graph, treeNum);
             starterNodes.insert(starterNodes.end(), simpleStarters.begin(), simpleStarters.end());
-        }
-        for(std::vector<int>::iterator it = starterNodes.begin(); it != starterNodes.end(); ++it){
-            computeTree(*it, graph, distanceMatrix, stretchMatrices, treeMatrices, congestions);
+            std::cout << "Heuristic chosen: random" << std::endl;
         }
         StretchMatrix stretchStar(vertexNum, vertexNum, 0);
-        for(std::vector<StretchMatrix>::iterator it = stretchMatrices.begin(); it != stretchMatrices.end(); ++it){
-            stretchStar += *it;
+        std::thread threads[starterNodes.size()];
+        std::vector<StretchMatrix> stretchMatrices(starterNodes.size(), StretchMatrix(vertexNum, vertexNum, 0));
+        for(int j = 0; j < starterNodes.size(); ++j){ //it = starterNodes.begin(); it != starterNodes.end(); ++it){
+            threads[j] = std::thread(computeTree, starterNodes[j], std::cref(graph), std::cref(distanceMatrix), std::ref(stretchMatrices[j]), std::ref(congestions));
+            std::cout << "tree computing..." << std::endl;
+        }
+        for(int j = 0; j < starterNodes.size(); ++j){ //it = starterNodes.begin(); it != starterNodes.end(); ++it){
+            threads[j].join();
+            stretchStar += stretchMatrices[j];
         }
         stretchStar = stretchStar / treeNum;
+        w.writeStretchStars(stretchStar, std::string(startingGraphPath), treeNum);
         stretchStarStar += stretchStar;
         //stretchStars.emplace_back(stretchStar);
         std::cout << "repetition " << i << " done!" << std::endl;
@@ -136,7 +172,6 @@ int main(int argc, const char * argv[]) {
     
     //saving data on file
     std::cout << "Saving data on file..." << std::endl;
-    Writer w;
     //w.writeStretchStars(stretchStars, std::string(startingGraphPath), treeNum);
     w.writeStretchStarStar(stretchStarStar, std::string(startingGraphPath), treeNum);
     std::cout << "Saving done!" << std::endl;
@@ -213,26 +248,31 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 
-void computeTree(const int root, const Graph& g, const DistanceMatrix &dm, std::vector<StretchMatrix> &sm, std::vector<TreeDistanceMatrix> &tdm, std::vector<Congestion> &c){
-    int vertexNum = num_vertices(g);
-    std::vector<vertexDescriptor> parents(vertexNum); //necessary for dijkstra
-    std::vector<int> distances(vertexNum); //necessary for dijkstra
-    dijkstra_shortest_paths(g, root, predecessor_map(&parents[0]).distance_map(&distances[0]));
-    std::vector<int> predecessors(parents.begin(), parents.end());
-    TreeWorker t(distances, predecessors, root, g);
-    c.emplace_back(t.getCongestion());
-    TreeDistanceMatrix treeMatrix(vertexNum, vertexNum, 0);
-    StretchMatrix stretchMatrix(vertexNum, vertexNum, 0);
-    for(std::size_t i = 0; i < vertexNum; ++i) {
-        for(std::size_t j = i+1; j < vertexNum; ++j) {
-            treeMatrix(i, j) = distances[i] + distances[j] - 2 * distances[t.lca(i, j)];
-            if(dm[i][j] == 0){
-                stretchMatrix(i, j) = treeMatrix(i, j);
-            }else{
-                stretchMatrix(i, j) = treeMatrix(i, j) / (double) dm[i][j];
-            }
-        }
-    }
-        tdm.emplace_back(treeMatrix);
-        sm.emplace_back(stretchMatrix);
-}
+//void computeTree(const int root, const Graph& g, const DistanceMatrix &dm, StretchMatrix &sm, std::vector<Congestion> &c){
+//    std::cout << "starting tree..." << std::endl;
+//    int vertexNum = num_vertices(g);
+//    std::vector<vertexDescriptor> parents(vertexNum); //necessary for dijkstra
+//    std::vector<int> distances(vertexNum); //necessary for dijkstra
+//    dijkstra_shortest_paths(g, root, predecessor_map(&parents[0]).distance_map(&distances[0]));
+//    std::vector<int> predecessors(parents.begin(), parents.end());
+//    TreeWorker t(distances, predecessors, root, g);
+//    //c.emplace_back(t.getCongestion());
+//    TreeDistanceMatrix treeMatrix(vertexNum, vertexNum, 0);
+//    //StretchMatrix stretchMatrix(vertexNum, vertexNum, 0);
+//    for(std::size_t i = 0; i < vertexNum; ++i) {
+////        if(i % 20 == 0){
+////            std::cout << i << " columns of the tree computed" << std::endl;
+////        }
+//        for(std::size_t j = i+1; j < vertexNum; ++j) {
+//            treeMatrix(i, j) = distances[i] + distances[j] - 2 * distances[t.lca(i, j)];
+//            if(dm[i][j] == 0){
+//                sm(i, j) = treeMatrix(i, j);
+//            }else{
+//                sm(i, j) = treeMatrix(i, j) / (double) dm[i][j];
+//            }
+//        }
+//    }
+//    std::cout << "finished tree!" << std::endl;
+//        //tdm.emplace_back(treeMatrix);
+//}
+
