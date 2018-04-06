@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C008452C20750279006B8E20 /* libboost_system.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C008452B20750278006B8E20 /* libboost_system.dylib */; };
 		C036A0D720625F35001F6C73 /* MatrixLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C036A0D520625F35001F6C73 /* MatrixLoader.cpp */; };
 		C036A0DA20628562001F6C73 /* CenterHeuristic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C036A0D820628562001F6C73 /* CenterHeuristic.cpp */; };
 		C037269A205861EC00AB4143 /* SimpleHeuristic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0372698205861EC00AB4143 /* SimpleHeuristic.cpp */; };
@@ -30,6 +31,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C00845292075024B006B8E20 /* usr */ = {isa = PBXFileReference; lastKnownFileType = folder; name = usr; path = ../../../../../usr; sourceTree = "<group>"; };
+		C008452B20750278006B8E20 /* libboost_system.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_system.dylib; path = ../../../../../usr/local/Cellar/boost/1.66.0/lib/libboost_system.dylib; sourceTree = "<group>"; };
 		C036A0D520625F35001F6C73 /* MatrixLoader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MatrixLoader.cpp; sourceTree = "<group>"; };
 		C036A0D620625F35001F6C73 /* MatrixLoader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MatrixLoader.hpp; sourceTree = "<group>"; };
 		C036A0D820628562001F6C73 /* CenterHeuristic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CenterHeuristic.cpp; sourceTree = "<group>"; };
@@ -56,6 +59,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C008452C20750279006B8E20 /* libboost_system.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,6 +109,8 @@
 		C07C79F9203AD7F40013BD00 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C008452B20750278006B8E20 /* libboost_system.dylib */,
+				C00845292075024B006B8E20 /* usr */,
 				C07C79FC203ADCF90013BD00 /* boost_1_66_0 */,
 				C07C79FA203AD7F40013BD00 /* boost_1_66_0.tar.gz */,
 			);
@@ -290,7 +296,10 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				HEADER_SEARCH_PATHS = /usr/local/Cellar/boost/1.66.0/include/;
-				LIBRARY_SEARCH_PATHS = /usr/local/Cellar/boost/1.66.0/lib/;
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/Cellar/boost/1.66.0/lib/,
+					/usr/local/Cellar/boost/1.66.0/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -300,7 +309,10 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				HEADER_SEARCH_PATHS = /usr/local/Cellar/boost/1.66.0/include/;
-				LIBRARY_SEARCH_PATHS = /usr/local/Cellar/boost/1.66.0/lib/;
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/Cellar/boost/1.66.0/lib/,
+					/usr/local/Cellar/boost/1.66.0/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
