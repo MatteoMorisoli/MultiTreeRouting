@@ -1,0 +1,10 @@
+set( SOURCES
+MultiTreeRouting/CenterHeuristic.cpp
+MultiTreeRouting/GraphLoader.cpp
+MultiTreeRouting/MatrixLoader.cpp
+MultiTreeRouting/Printer.cpp
+MultiTreeRouting/SimpleHeuristic.cpp
+MultiTreeRouting/TreeWorker.cpp
+MultiTreeRouting/Writer.cpp
+MultiTreeRouting/main.cpp
+)
