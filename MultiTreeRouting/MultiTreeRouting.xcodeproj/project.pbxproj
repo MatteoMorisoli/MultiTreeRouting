@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C008452C20750279006B8E20 /* libboost_system.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C008452B20750278006B8E20 /* libboost_system.dylib */; };
 		C036A0D720625F35001F6C73 /* MatrixLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C036A0D520625F35001F6C73 /* MatrixLoader.cpp */; };
 		C036A0DA20628562001F6C73 /* CenterHeuristic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C036A0D820628562001F6C73 /* CenterHeuristic.cpp */; };
 		C037269A205861EC00AB4143 /* SimpleHeuristic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0372698205861EC00AB4143 /* SimpleHeuristic.cpp */; };
@@ -59,7 +58,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C008452C20750279006B8E20 /* libboost_system.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -308,6 +306,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				HEADER_SEARCH_PATHS = /usr/local/Cellar/boost/1.66.0/include/;
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/Cellar/boost/1.66.0/lib/,

@@ -12,13 +12,6 @@
 #include <boost/graph/floyd_warshall_shortest.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/io.hpp>
-#include <boost/system/config.hpp>
-#include <boost/system/error_code.hpp>
-#include <boost/system/system_error.hpp>
-#include <boost/asio/post.hpp>
-#include <boost/asio.hpp>
-#include <boost/asio/thread_pool.hpp>
-#include <boost/bind.hpp>
 #include <boost/graph/johnson_all_pairs_shortest.hpp>
 #include <iostream>
 #include <fstream>
@@ -130,19 +123,28 @@ int main(int argc, const char * argv[]) {
         }
         StretchMatrix stretchStar(vertexNum, vertexNum, 0);
         int max_threads = std::thread::hardware_concurrency();
-        asio::thread_pool pool(max_threads);
-        //std::thread threads[starterNodes.size()];
-        std::vector<StretchMatrix> stretchMatrices(starterNodes.size(), StretchMatrix(vertexNum, vertexNum, 0));
-        for(int j = 0; j < starterNodes.size(); ++j){ //it = starterNodes.begin(); it != starterNodes.end(); ++it){
-            //threads[j] = std::thread(computeTree, starterNodes[j], std::cref(graph), std::cref(distanceMatrix), std::ref(stretchMatrices[j]), std::ref(congestions));
-            asio::post(pool, bind(computeTree, starterNodes[j], std::cref(graph), std::cref(distanceMatrix), std::ref(stretchMatrices[j]), std::ref(congestions)));
-            std::cout << "tree computing..." << std::endl;
+        if(std::thread::hardware_concurrency() > treeNum){
+            max_threads = treeNum;
         }
-        pool.join();
-        for(int j = 0; j < starterNodes.size(); ++j){ //it = starterNodes.begin(); it != starterNodes.end(); ++it){
-            //threads[j].join();
-            stretchStar += stretchMatrices[j];
+        int repetitions = starterNodes.size() / max_threads;
+        std::cout << "doing " << repetitions << " repetitions" << std::endl;
+        for(int k = 0; k < repetitions; ++k){
+            std::thread threads[max_threads];
+            std::vector<StretchMatrix> stretchMatrices(max_threads, StretchMatrix(vertexNum, vertexNum, 0));
+            for(int j = 0; j < max_threads; ++j){ //it = starterNodes.begin(); it != starterNodes.end(); ++it){
+                threads[j] = std::thread(computeTree, starterNodes[j + 8 * k], std::cref(graph), std::cref(distanceMatrix), std::ref(stretchMatrices[j]), std::ref(congestions));
+            //asio::post(pool, bind(computeTree, starterNodes[j], std::cref(graph), std::cref(distanceMatrix), std::ref(stretchMatrices[j]), std::ref(congestions)));
+            //std::cout << "tree computing..." << std::endl;
+            }
+        //pool.join();
+            for(int j = 0; j < max_threads; ++j){ //it = starterNodes.begin(); it != starterNodes.end(); ++it){
+                threads[j].join();
+            }
+            for(int j = 0; j < max_threads; ++j){ //it = starterNodes.begin(); it != starterNodes.end(); ++it){
+                stretchStar += stretchMatrices[j];
+            }
         }
+        
         stretchStar = stretchStar / treeNum;
         w.writeStretchStars(stretchStar, std::string(startingGraphPath), treeNum);
         stretchStarStar += stretchStar;
@@ -244,9 +246,9 @@ void computeTree(const int root, const Graph& g, const DistanceMatrix &dm, Stret
     TreeDistanceMatrix treeMatrix(vertexNum, vertexNum, 0);
     //StretchMatrix stretchMatrix(vertexNum, vertexNum, 0);
     for(std::size_t i = 0; i < vertexNum; ++i) {
-        //        if(i % 20 == 0){
-        //            std::cout << i << " columns of the tree computed" << std::endl;
-        //        }
+                if(i % 1000 == 0){
+                    std::cout << i << " columns of the tree computed" << std::endl;
+                }
         for(std::size_t j = i+1; j < vertexNum; ++j) {
             treeMatrix(i, j) = distances[i] + distances[j] - 2 * distances[t.lca(i, j)];
             if(dm[i][j] == 0){
