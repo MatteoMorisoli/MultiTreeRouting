@@ -41,7 +41,7 @@
 		C08A8B7D207FB87700A9B548 = {
 			isa = PBXGroup;
 			children = (
-				C08A8B88207FB87700A9B548 /* DataAnalyzer */,
+				C08A8B88207FB87700A9B548 /* DataAnalyser */,
 				C08A8B87207FB87700A9B548 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,20 +54,20 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		C08A8B88207FB87700A9B548 /* DataAnalyzer */ = {
+		C08A8B88207FB87700A9B548 /* DataAnalyser */ = {
 			isa = PBXGroup;
 			children = (
 				C08A8B89207FB87700A9B548 /* main.cpp */,
 			);
-			path = DataAnalyzer;
+			path = DataAnalyser;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		C08A8B85207FB87700A9B548 /* DataAnalyzer */ = {
+		C08A8B85207FB87700A9B548 /* DataAnalyser */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C08A8B8D207FB87700A9B548 /* Build configuration list for PBXNativeTarget "DataAnalyzer" */;
+			buildConfigurationList = C08A8B8D207FB87700A9B548 /* Build configuration list for PBXNativeTarget "DataAnalyser" */;
 			buildPhases = (
 				C08A8B82207FB87700A9B548 /* Sources */,
 				C08A8B83207FB87700A9B548 /* Frameworks */,
@@ -77,7 +77,7 @@
 			);
 			dependencies = (
 			);
-			name = DataAnalyzer;
+			name = DataAnalyser;
 			productName = DataAnalyzer;
 			productReference = C08A8B86207FB87700A9B548 /* DataAnalyzer */;
 			productType = "com.apple.product-type.tool";
@@ -97,7 +97,7 @@
 					};
 				};
 			};
-			buildConfigurationList = C08A8B81207FB87700A9B548 /* Build configuration list for PBXProject "DataAnalyzer" */;
+			buildConfigurationList = C08A8B81207FB87700A9B548 /* Build configuration list for PBXProject "DataAnalyser" */;
 			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -109,7 +109,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				C08A8B85207FB87700A9B548 /* DataAnalyzer */,
+				C08A8B85207FB87700A9B548 /* DataAnalyser */,
 			);
 		};
 /* End PBXProject section */
@@ -249,7 +249,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C08A8B81207FB87700A9B548 /* Build configuration list for PBXProject "DataAnalyzer" */ = {
+		C08A8B81207FB87700A9B548 /* Build configuration list for PBXProject "DataAnalyser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C08A8B8B207FB87700A9B548 /* Debug */,
@@ -258,7 +258,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C08A8B8D207FB87700A9B548 /* Build configuration list for PBXNativeTarget "DataAnalyzer" */ = {
+		C08A8B8D207FB87700A9B548 /* Build configuration list for PBXNativeTarget "DataAnalyser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C08A8B8E207FB87700A9B548 /* Debug */,
