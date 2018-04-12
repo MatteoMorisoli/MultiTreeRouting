@@ -72,6 +72,8 @@ int main(int argc, const char * argv[]) {
     refinedFilePath.replace(refinedFilePath.size()-4, 11, "refined.csv");
     std::string reviewFilePath = filePath;
     reviewFilePath.replace(reviewFilePath.size()-4, 10, "review.txt");
+    std::string valueFilePath = filePath;
+    valueFilePath.replace(valueFilePath.size()-4, 9, "value.txt");
     std::ofstream refined(refinedFilePath);
     refined << min << "," << firstQuartile << "," << median << "," << thirdQuartile << ","  << max;
     refined.close();
@@ -87,6 +89,10 @@ int main(int argc, const char * argv[]) {
         review << "We have " << it->second << " instances of the value " << it->first << std::endl;
     }
     review.close();
+    std::ofstream values(valueFilePath);
+    for(std::map<long double, long>::iterator it = valueMap.begin(); it != valueMap.end(); ++it){
+        values << it->first << "," << it->second << std::endl;
+    }
     return 0;
 }
 
