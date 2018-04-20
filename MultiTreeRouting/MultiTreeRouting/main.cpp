@@ -78,7 +78,8 @@ int main(int argc, const char * argv[]) {
         return 0;
     }
     std::cout << "graph loaded!" << std::endl;
-    
+    std::cout << "Number of vertices: " << vertexNum << " and in file: " << g.getVertexNum() << std::endl;
+    std::cout << "Number of edges: " << num_edges(graph) << " and in file: " << g.getEdgeNum() << std::endl;
     
     //Distance matrix creation and population using Johnson
     std::string matrixFile(argv[1]);
@@ -133,6 +134,13 @@ int main(int argc, const char * argv[]) {
             std::thread threads[max_threads];
             std::vector<StretchMatrix> stretchMatrices(max_threads, StretchMatrix(vertexNum, vertexNum, 0));
             for(int j = 0; j < max_threads; ++j){ //it = starterNodes.begin(); it != starterNodes.end(); ++it){
+                std::string alias;
+                for(auto &i : mapping){
+                    if(i.second == starterNodes[j + 8 * k]){
+                        alias = i.first;
+                    }
+                }
+                std::cout << "Starting with root node: " << starterNodes[j + 8 * k] << " aka " << alias << std::endl;
                 threads[j] = std::thread(computeTree, starterNodes[j + 8 * k], std::cref(graph), std::cref(distanceMatrix), std::ref(stretchMatrices[j]), std::ref(congestions));
             }
             for(int j = 0; j < max_threads; ++j){ //it = starterNodes.begin(); it != starterNodes.end(); ++it){
@@ -242,7 +250,7 @@ void computeTree(const int root, const Graph& g, const DistanceMatrix &dm, Stret
     TreeDistanceMatrix treeMatrix(vertexNum, vertexNum, 0);
     for(std::size_t i = 0; i < vertexNum; ++i) {
                 if(i % ((int) vertexNum/10) == 0){
-                    std::cout << i*10 << "% tree with root " << root << std::endl;
+                    std::cout << i/vertexNum*10 << "% tree with root " << root << std::endl;
                 }
         for(std::size_t j = i+1; j < vertexNum; ++j) {
             treeMatrix(i, j) = distances[i] + distances[j] - 2 * distances[t.lca(i, j)];

@@ -30,6 +30,7 @@ private:
     std::vector<Edge> edges;
     VSet verticesLabels;
     void addPossibleVertices(const std::string& v1, const std::string& v2);
+    bool checkIfCaidaFile(const std::string& filePath);
     
 public:
     GraphLoader(const char * filePath);

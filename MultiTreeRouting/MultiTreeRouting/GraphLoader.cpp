@@ -17,14 +17,21 @@ GraphLoader::GraphLoader(const char * filePath){
     //check on windows if it works
     std::ifstream readFile(filePath);
     std::string line;
+    bool isCaida = checkIfCaidaFile(std::string(filePath));
     while(std::getline(readFile, line)){
         std::istringstream iss(line);
         std::string e1, e2, e3;
         iss >> e1 >> e2 >> e3;
-        if((e1 == std::string("D")) || (e1 == std::string("I"))){
-            addPossibleVertices(e2, e3);
-            edges.emplace_back(Edge(e2, e3));
-            edgeNum++;
+        if(isCaida){
+            if((e1 == std::string("D")) || (e1 == std::string("I"))){
+                addPossibleVertices(e2, e3);
+                edges.emplace_back(Edge(e2, e3));
+                ++edgeNum;
+            }
+        }else{
+            addPossibleVertices(e1, e2);
+            edges.emplace_back(Edge(e1, e2));
+            ++edgeNum;
         }
     }    
 }
@@ -59,4 +66,12 @@ const int GraphLoader::getEdgeNum(){
 //getter for number of vertices
 const int GraphLoader::getVertexNum(){
     return VertexNum;
+}
+
+bool GraphLoader::checkIfCaidaFile(const std::string &filePath){
+    if(filePath.substr(filePath.size()-3, 3) == "txt"){
+        return true;
+    }else{
+        return false;
+    }
 }

@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <map>
 #include <cmath>
 
@@ -20,20 +21,44 @@ int main(int argc, const char * argv[]) {
     std::map<long double, long> valueMap;
     long size = 0;
     long double mean = 0;
-    while(!datafile.eof()){
-        std::getline(datafile, value, ',');
-        try{
-            //std::cout << value << std::endl;
-            long double numValue = std::stod(value);
-            mean += numValue;
-            ++size;
-            if(valueMap.find(numValue) == valueMap.end()){
-                valueMap.insert(std::pair<double, int>(numValue, 1));
-            }else{
-                valueMap[numValue] = valueMap[numValue] + 1;
+    long start = 1;
+    std::string substring = filePath.substr(filePath.size()-3, 3);
+    if(substring == "dmf"){
+        for(int i = 0; i < size; ++i){
+            std::getline(datafile, value);
+            std::istringstream iss(value);
+            std::string token;
+            for(int j = 0; j < size; ++j){
+                iss >> token;
+                if( j >= start){
+                    long double numValue = std::stod(value);
+                    mean += numValue;
+                    ++size;
+                    if(valueMap.find(numValue) == valueMap.end()){
+                        valueMap.insert(std::pair<long double, long>(numValue, 1));
+                    }else{
+                        valueMap[numValue] = valueMap[numValue] + 1;
+                    }
+                }
             }
-        }catch(...){
-            std::cout << "end reached" << std::endl;
+            start++;
+        }
+    }else{
+        while(!datafile.eof()){
+            std::getline(datafile, value, ',');
+            try{
+                //std::cout << value << std::endl;
+                long double numValue = std::stod(value);
+                mean += numValue;
+                ++size;
+                if(valueMap.find(numValue) == valueMap.end()){
+                    valueMap.insert(std::pair<long double, long>(numValue, 1));
+                }else{
+                    valueMap[numValue] = valueMap[numValue] + 1;
+                }
+            }catch(...){
+                std::cout << "end reached" << std::endl;
+            }
         }
     }
     mean = mean / (long double) size;
