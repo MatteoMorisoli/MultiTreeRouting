@@ -10,16 +10,16 @@
 #define Writer_hpp
 
 #include <stdio.h>
-#include <boost/numeric/ublas/matrix.hpp>
+#include <boost/numeric/ublas/triangular.hpp>
 #include <boost/numeric/ublas/io.hpp>
 #include <fstream>
 
 class Writer{
-    using StretchMatrix = boost::numeric::ublas::matrix<double>;
+    using SmartStretchMatrix = boost::numeric::ublas::triangular_matrix<float, boost::numeric::ublas::upper>;
 
     
 public:
-    void writeStretchStars(StretchMatrix &sm, std::string filePath, const int numTrees);
-    void writeStretchStarStar(StretchMatrix &sm, std::string filePath, const int numTrees);
+    void writeStretchStars(SmartStretchMatrix &sm, std::string filePath, const int numTrees);
+    void writeStretchStarStar(SmartStretchMatrix &sm, std::string filePath, const int numTrees);
 };
 #endif /* Writer_hpp */

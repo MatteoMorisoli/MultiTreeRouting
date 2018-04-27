@@ -65,15 +65,15 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Users/met/Documents/MultiTreeRouting/MultiTreeRouting/MultiTreeRouting/testGraph3.txt"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "/Users/met/Desktop/Thesis/Run/cycle-aslinks.l7.t1.c006442.20180227.txt"
+            argument = "/Users/met/Desktop/Thesis/Run/RocketFuel/weights-dist/1239/weights.intra"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "1"
+            argument = "/Users/met/Desktop/Thesis/Run/Caida/cycle-aslinks.l7.t1.c006442.20180227.txt"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "8"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

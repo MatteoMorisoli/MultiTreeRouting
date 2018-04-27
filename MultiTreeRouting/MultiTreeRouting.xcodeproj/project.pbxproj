@@ -15,6 +15,7 @@
 		C07C79F3203AD6EE0013BD00 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C07C79F2203AD6EE0013BD00 /* main.cpp */; };
 		C07C7A01204596590013BD00 /* GraphLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C07C79FF204596590013BD00 /* GraphLoader.cpp */; };
 		C0F38D29206D1568003CA923 /* Writer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0F38D27206D1568003CA923 /* Writer.cpp */; };
+		C0F62A612092560900107A22 /* DataAnalyser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0F62A5F2092560900107A22 /* DataAnalyser.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -51,6 +52,8 @@
 		C07C7A00204596590013BD00 /* GraphLoader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GraphLoader.hpp; sourceTree = "<group>"; };
 		C0F38D27206D1568003CA923 /* Writer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Writer.cpp; sourceTree = "<group>"; };
 		C0F38D28206D1568003CA923 /* Writer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Writer.hpp; sourceTree = "<group>"; };
+		C0F62A5F2092560900107A22 /* DataAnalyser.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DataAnalyser.cpp; sourceTree = "<group>"; };
+		C0F62A602092560900107A22 /* DataAnalyser.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DataAnalyser.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +88,8 @@
 			isa = PBXGroup;
 			children = (
 				C07C79F2203AD6EE0013BD00 /* main.cpp */,
+				C0F62A5F2092560900107A22 /* DataAnalyser.cpp */,
+				C0F62A602092560900107A22 /* DataAnalyser.hpp */,
 				C036A0D520625F35001F6C73 /* MatrixLoader.cpp */,
 				C036A0D620625F35001F6C73 /* MatrixLoader.hpp */,
 				C037269B205A740400AB4143 /* TreeWorker.cpp */,
@@ -172,6 +177,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C0F62A612092560900107A22 /* DataAnalyser.cpp in Sources */,
 				C0F38D29206D1568003CA923 /* Writer.cpp in Sources */,
 				C03726A0205AFF2300AB4143 /* Printer.cpp in Sources */,
 				C036A0D720625F35001F6C73 /* MatrixLoader.cpp in Sources */,

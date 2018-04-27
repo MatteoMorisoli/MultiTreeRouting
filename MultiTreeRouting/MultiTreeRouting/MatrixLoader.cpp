@@ -22,7 +22,7 @@ bool MatrixLoader::fileExists(){
 void MatrixLoader::writeMatrix(const DistanceMatrix &d, const int size){
     std::ofstream outputFile(name);
     for(int i = 0; i < size; ++i){
-        for(int j = 0; j < size; ++j){
+        for(int j = i+1; j < size; ++j){
             outputFile << d[i][j] << " ";
         }
         if(i != size - 1){
@@ -33,16 +33,17 @@ void MatrixLoader::writeMatrix(const DistanceMatrix &d, const int size){
 }
 
 //reads a file with an already computed distance matrix and loads it
-void MatrixLoader::readMatrix(DistanceMatrix &d, const int size){
+void MatrixLoader::readMatrix(SmartDistanceMatrix &d, const int size){
     std::ifstream matrixfile(name);
     std::string line;
     for(int i = 0; i < size; ++i){
         std::getline(matrixfile, line);
         std::istringstream iss(line);
         std::string token;
-        for(int j = 0; j < size; ++j){
+        for(int j = i; j < size; ++j){
             iss >> token;
-            d[i][j] = std::atof(token.c_str());
+            d(i, j) = std::atof(token.c_str());
         }
     }
+    matrixfile.close();
 }

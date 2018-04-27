@@ -9,7 +9,7 @@
 #include "GraphLoader.hpp"
 
 //constructor, opens the file and load the graph in the object
-GraphLoader::GraphLoader(const char * filePath){
+GraphLoader::GraphLoader(const std::string filePath){
     VertexNum = 0;
     edgeNum = 0;
     
@@ -17,7 +17,7 @@ GraphLoader::GraphLoader(const char * filePath){
     //check on windows if it works
     std::ifstream readFile(filePath);
     std::string line;
-    bool isCaida = checkIfCaidaFile(std::string(filePath));
+    bool isCaida = checkIfCaidaFile(filePath);
     while(std::getline(readFile, line)){
         std::istringstream iss(line);
         std::string e1, e2, e3;

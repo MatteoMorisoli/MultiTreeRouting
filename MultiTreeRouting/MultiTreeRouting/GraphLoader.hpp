@@ -33,7 +33,7 @@ private:
     bool checkIfCaidaFile(const std::string& filePath);
     
 public:
-    GraphLoader(const char * filePath);
+    GraphLoader(const std::string filePath);
     const int getEdgeNum();
     const int getVertexNum();
     const std::vector<Edge>& getEdgeList();
