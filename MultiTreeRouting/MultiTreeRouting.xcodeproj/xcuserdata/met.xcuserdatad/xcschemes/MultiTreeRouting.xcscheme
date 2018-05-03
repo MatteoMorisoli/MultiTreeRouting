@@ -66,6 +66,10 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "/Users/met/Desktop/Thesis/Run/RocketFuel/weights-dist/1239/weights.intra"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Users/met/Desktop/config.conf"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -74,15 +78,15 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "8"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "1"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "1"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>

@@ -19,11 +19,12 @@
 #include <boost/numeric/ublas/io.hpp>
 
 class DataAnalyser{
-    using SmartStretchMatrix = boost::numeric::ublas::triangular_matrix<float, boost::numeric::ublas::upper>;
+    using diagMatrixFloat = boost::numeric::ublas::triangular_matrix<float, boost::numeric::ublas::upper>;
 public:
     DataAnalyser(std::string f, std::string suf, bool isStar, int treeNum);
-    void addData(SmartStretchMatrix& sm);
-    void generateFiles();
+    void addData(diagMatrixFloat& sm);
+    void generateStretchFiles();
+    void generateCongestionFiles();
 private:
     std::string filePath;
     std::string suffix;

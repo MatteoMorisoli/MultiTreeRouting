@@ -57,7 +57,11 @@ Congestion TreeWorker::getCongestion(){
         trees[predecessorVector[i]].insert(i);
         trees[i].insert(i);
         if(i != predecessorVector[i]){
-            treeEdges.emplace_back(std::make_pair(i, predecessorVector[i]));
+            if(predecessorVector[i] >= i){
+                treeEdges.emplace_back(std::make_pair(i, predecessorVector[i]));
+            }else{
+                treeEdges.emplace_back(std::make_pair(predecessorVector[i], i));
+            }
         }
     }
     addSubTrees(rootNode, trees);

@@ -28,7 +28,7 @@ DataAnalyser::DataAnalyser(std::string f, std::string suf, bool isStar, int tree
     
 }
 
-void DataAnalyser::addData(SmartStretchMatrix &sm){
+void DataAnalyser::addData(diagMatrixFloat &sm){
     for(int i = 0; i < sm.size1(); ++i){
         for(int j = i; j < sm.size2(); j++){
             long double value = sm(i, j);
@@ -43,7 +43,7 @@ void DataAnalyser::addData(SmartStretchMatrix &sm){
     }
 }
 
-void DataAnalyser::generateFiles(){
+void DataAnalyser::generateStretchFiles(){
     long double mean = sum / (long double) sizeCounter;
     double min = DataAnalyser::valueOfIndex(valueMap, 0);
     double max = DataAnalyser::valueOfIndex(valueMap, sizeCounter);
@@ -99,6 +99,9 @@ void DataAnalyser::generateFiles(){
     for(std::map<double, long>::iterator it = valueMap.begin(); it != valueMap.end(); ++it){
         values << it->first << "," << it->second << std::endl;
     }
+}
+
+void DataAnalyser::generateCongestionFiles(){
 }
 
 double DataAnalyser::valueOfIndex(const std::map<double, long> & map, long index)const{
