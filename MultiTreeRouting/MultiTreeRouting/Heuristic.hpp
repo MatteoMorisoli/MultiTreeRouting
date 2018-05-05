@@ -10,7 +10,7 @@
 #define Heuristic_hpp
 
 #include <stdio.h>
-#include <set>
+#include <vector>
 #include <boost/graph/adjacency_list.hpp>
 
 using EdgeWeight = boost::property<boost::edge_weight_t, int>;
@@ -19,8 +19,12 @@ using Graph = boost::adjacency_list<boost::setS, boost::vecS, boost::undirectedS
 
 //abstract interface for heuristic implementations
 class Heuristic{
+protected:
+    std::vector<int> usedRoots;
+    int numVertices;
 public:
-    virtual std::set<int> selectStartingNodes(const int numVertices, const Graph& graph, const int numRoots) const = 0;
+    Heuristic(int numV);
+    virtual int selectStartingNode(const Graph& graph) const = 0;
 };
 
 #endif /* Heuristic_hpp */

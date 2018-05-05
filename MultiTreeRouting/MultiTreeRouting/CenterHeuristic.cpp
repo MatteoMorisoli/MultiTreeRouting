@@ -8,7 +8,9 @@
 
 #include "CenterHeuristic.hpp"
 
-std::set<int> CenterHeuristic::selectStartingNodes(const int numVertices, const Graph& graph, const int numRoots)const{
+CenterHeuristic::CenterHeuristic(int numV): Heuristic(numV){}
+
+int CenterHeuristic::selectStartingNode(const Graph& graph){
     std::vector<int> numNeighbours;
     std::vector<int> num2StepNeighbours;
     std::set<int> startNodes;
@@ -25,10 +27,13 @@ std::set<int> CenterHeuristic::selectStartingNodes(const int numVertices, const 
         }
         num2StepNeighbours.emplace_back(sum);
     }
-    for(int i = 0; i < numRoots; ++i){
-        auto it = max_element(std::begin(num2StepNeighbours), std::end(num2StepNeighbours));
-        startNodes.insert(std::distance(num2StepNeighbours.begin(), it));
+    auto it = max_element(std::begin(num2StepNeighbours), std::end(num2StepNeighbours));
+    int root = std::distance(num2StepNeighbours.begin(), it);
+    while(std::find(this->usedRoots.begin(), this->usedRoots.end(), root) != this->usedRoots.end()){
         *it = 0;
+        it = max_element(std::begin(num2StepNeighbours), std::end(num2StepNeighbours));
+        root = std::distance(num2StepNeighbours.begin(), it);
     }
-    return startNodes;
+    this->usedRoots.push_back(root);
+    return root;
 }

@@ -18,7 +18,6 @@
 #include "SimpleHeuristic.hpp"
 #include "CenterHeuristic.hpp"
 #include "TreeWorker.hpp"
-#include "Printer.hpp"
 #include "MatrixLoader.hpp"
 #include "DataAnalyser.hpp"
 #include "ConfigLoader.hpp"
@@ -65,15 +64,17 @@ int main(int argc, const char * argv[]) {
     
     for(int a = 0; a < config.getExperiments(); ++a){
         Graph graph;
+        std::map<int, std::string> nameMapping;
         //Loading the graph from file and file creation as an adjacency list
         {GraphLoader g(config.getGraphPath());
 
             int index = 0;
-            //creating the mapping from name to int used in the graph
             std::map<std::string, int> mapping;
+            //creating the mapping from name to int used in the graph
             for(auto it = g.getVerticesLabels().begin(); it != g.getVerticesLabels().end(); ++it){
                 add_vertex(*it, graph);
                 mapping.insert(std::pair<std::string, int>(*it, index));
+                nameMapping.insert(std::pair<int, std::string>(index, *it));
                 index++;
             }
             //setting edge weight at 1 for every edge in our case
@@ -138,7 +139,7 @@ int main(int argc, const char * argv[]) {
             //creation of the trees and of the relative distance matrices and stretch matrices
             std::vector<int> starterNodes;
             if(config.getHeuristicId() == 1){
-                CenterHeuristic h;
+                CenterHeuristic h(vertexNum);
                 std::set<int> simpleStarters = h.CenterHeuristic::selectStartingNodes(vertexNum, graph, config.getTreeNumbers()[a]);
                 starterNodes.insert(starterNodes.end(), simpleStarters.begin(), simpleStarters.end());
                 std::cout << "Heuristic chosen: center" << std::endl;
@@ -173,7 +174,15 @@ int main(int argc, const char * argv[]) {
             std::cout << "starting division" << std::endl;
             resultStar /= config.getTreeNumbers()[a];
             std::cout << "ended division" << std::endl;
-            dAll.addData(resultStar);
+            if(config.getMetricId() == 0){
+                dAll.addData(resultStar);
+            }else if(config.getMetricId() == 1){
+                if(config.getRepetitions() == 1){
+                    dAll.addAndPrintCongestionData(resultStar, nameMapping);
+                }else{
+                    dAll.addData(resultStar);
+                }
+            }
             std::cout << "starting sum" << std::endl;
             for(int y = 0; y < sm.size1(); ++y){
                 for(int z = y; z < sm.size2();++z){
@@ -184,12 +193,21 @@ int main(int argc, const char * argv[]) {
             std::cout << "ended sum" << std::endl;
             std::cout << "repetition " << i+1 << " done!" << std::endl;
         }
-        dAll.generateStretchFiles();
+        if(config.getMetricId() == 0){
+            dAll.generateStretchFiles();
+        }else if(config.getMetricId() == 1){
+            dAll.generateCongestionFiles();
+        }
         if(config.getRepetitions() != 1){
             resultStarStar /= config.getRepetitions();
             DataAnalyser dStar(config.getGraphPath(), suffix, true, config.getTreeNumbers()[a]);
-            dStar.addData(resultStarStar);
-            dStar.generateStretchFiles();
+            if(config.getMetricId() == 0){
+                dStar.addData(resultStarStar);
+                dStar.generateStretchFiles();
+            }else if(config.getMetricId() == 1){
+                dStar.addAndPrintCongestionData(resultStarStar, nameMapping);
+                dStar.generateCongestionFiles();
+            }
             std::cout << "Files generated" << std::endl;
         }
     }

@@ -16,6 +16,7 @@
 //this heuristic will return the numRoots distinct vertices with the highest number of other vertices that are at most at distance 2 from them
 class CenterHeuristic: public Heuristic{
 public:
-    std::set<int> selectStartingNodes(const int numVertices, const Graph& graph, const int numRoots) const;
+    CenterHeuristic(int numV);
+    int selectStartingNode(const Graph& graph);
 };
 #endif /* CenterHeuristic_hpp */

@@ -17,6 +17,7 @@
 //simple heuristic, will return numRoots distinct random vertices
 class SimpleHeuristic: public Heuristic{
 public:
-    std::set<int> selectStartingNodes(int numVertices, const Graph& graph, int numRoots) const;
+    SimpleHeuristic(int numV);
+    int selectStartingNode(const Graph& graph);
 };
 #endif /* SimpleHeuristic_hpp */
