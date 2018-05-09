@@ -17,6 +17,8 @@
 #include "GraphLoader.hpp"
 #include "SimpleHeuristic.hpp"
 #include "CenterHeuristic.hpp"
+#include "CentroidHeuristic.hpp"
+#include "MedianHeuristic.hpp"
 #include "TreeWorker.hpp"
 #include "MatrixLoader.hpp"
 #include "DataAnalyser.hpp"
@@ -43,30 +45,20 @@ void computeTreeCongestion(const int root, const Graph& g, DiagMatrixFloat &cm);
  */
 int main(int argc, const char * argv[]) {
     
-    
+    std::vector<std::string> suffixes = {"random", "center", "centroid", "median", "randomEvo", "centerEvo", "centroidEvo", "medianEvo"};
+    std::vector<std::string> metrics = {"stretch", "congestion"};
     //d\Definitions of the parameters for ease of use
     ConfigLoader config(argv[1]);
-//    const std::string startingGraphPath = std::string(argv[1]);
-//    const int treeNum = atoi(argv[2]);
-//    const int heuristicType = atoi(argv[3]);
-    std::string suffix;
-    if(config.getHeuristicId() == 1){
-        suffix = "center";
-    }else{
-        suffix = "random";
-    }
-    if(config.getMetricId() == 1){
-        suffix.append("congestion");
-    }else{
-        suffix.append("stretch");
-    }
-//    const int repetitions = atoi(argv[4]);
+    std::string suffix = suffixes[config.getHeuristicId()];
+    suffix.append(metrics[config.getMetricId()]);
+    
+    Graph graph;
+    bool computedGraph = false;
     
     for(int a = 0; a < config.getExperiments(); ++a){
-        Graph graph;
         std::map<int, std::string> nameMapping;
         //Loading the graph from file and file creation as an adjacency list
-        {GraphLoader g(config.getGraphPath());
+        if(!computedGraph){GraphLoader g(config.getGraphPath());
 
             int index = 0;
             std::map<std::string, int> mapping;
@@ -82,6 +74,7 @@ int main(int argc, const char * argv[]) {
             for(auto it = g.getEdgeList().begin(); it != g.getEdgeList().end(); ++it){
                 add_edge(mapping.at(it->first), mapping.at(it->second), weight, graph);
             }
+            computedGraph = true;
         }
         
         
@@ -137,30 +130,47 @@ int main(int argc, const char * argv[]) {
             std::cout << "starting repetition " << i+1 << " of " << config.getRepetitions() << "..." << std::endl;
             //std::this_thread::sleep_for(std::chrono::milliseconds(2000));
             //creation of the trees and of the relative distance matrices and stretch matrices
-            std::vector<int> starterNodes;
-            if(config.getHeuristicId() == 1){
-                CenterHeuristic h(vertexNum);
-                std::set<int> simpleStarters = h.CenterHeuristic::selectStartingNodes(vertexNum, graph, config.getTreeNumbers()[a]);
-                starterNodes.insert(starterNodes.end(), simpleStarters.begin(), simpleStarters.end());
+            Heuristic * h;
+            bool graphNeeded = true;
+            if(config.getHeuristicId() == 0){
+                h = new SimpleHeuristic(vertexNum);
                 std::cout << "Heuristic chosen: center" << std::endl;
-            }else if(config.getHeuristicId() == 0){
-                SimpleHeuristic h;
-                std::set<int> simpleStarters = h.SimpleHeuristic::selectStartingNodes(vertexNum, graph, config.getTreeNumbers()[a]);
-                starterNodes.insert(starterNodes.end(), simpleStarters.begin(), simpleStarters.end());
+            }else if(config.getHeuristicId() == 1){
+                h = new CenterHeuristic(vertexNum);
                 std::cout << "Heuristic chosen: random" << std::endl;
+            }else if(config.getHeuristicId() == 2){
+                h = new CentroidHeuristic(vertexNum);
+                graphNeeded = false;
+                std::cout << "Heuristic chosen: centroid" << std::endl;
+            }else if(config.getHeuristicId() == 3){
+                h = new MedianHeuristic(vertexNum);
+                graphNeeded = false;
+                std::cout << "Heuristic chosen: median" << std::endl;
             }
             //StretchMatrix stretchStar(vertexNum, vertexNum, 0);
             DiagMatrixFloat sm(vertexNum-1, vertexNum-1);
-            for(int x=0; x < starterNodes.size(); ++x){
+            for(int x=0; x < config.getTreeNumbers()[a]; ++x){
                 if(config.getMetricId() == 0){
-                    computeTreeStretch(starterNodes[x], graph, diagDistanceMatrix, sm);
+                    int root;
+                    if(graphNeeded){
+                        root = h->selectStartingNode(graph);
+                    }else{
+                        root = h->selectStartingNode(diagDistanceMatrix);
+                    }
+                    computeTreeStretch(root, graph, diagDistanceMatrix, sm);
                 }else if(config.getMetricId() == 1){
                     for(int k = 0; k < vertexNum - 1; ++k){
                         for(int j = k; j < vertexNum -1; ++j){
                             sm(k, j) = 0;
                         }
                     }
-                    computeTreeCongestion(starterNodes[x], graph, sm);
+                    int root;
+                    if(graphNeeded){
+                        root = h->selectStartingNode(graph);
+                    }else{
+                        root = h->selectStartingNode(diagDistanceMatrix);
+                    }
+                    computeTreeCongestion(root, graph, sm);
                 }
                 std::cout << "starting sum" << std::endl;
                 for(int y = 0; y < sm.size1(); ++y){

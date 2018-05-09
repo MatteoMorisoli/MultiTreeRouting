@@ -16,8 +16,10 @@
 
 //simple heuristic, will return numRoots distinct random vertices
 class SimpleHeuristic: public Heuristic{
+private:
 public:
     SimpleHeuristic(int numV);
-    int selectStartingNode(const Graph& graph);
+    int selectStartingNode(const Graph& graph) override;
+    int selectStartingNode(const DiagMatrixInt& dm) override {return -1;};
 };
 #endif /* SimpleHeuristic_hpp */

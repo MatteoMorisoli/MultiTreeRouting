@@ -17,6 +17,7 @@
 class CenterHeuristic: public Heuristic{
 public:
     CenterHeuristic(int numV);
-    int selectStartingNode(const Graph& graph);
+    int selectStartingNode(const Graph& graph) override;
+    int selectStartingNode(const DiagMatrixInt& dm) override {return -1;};
 };
 #endif /* CenterHeuristic_hpp */

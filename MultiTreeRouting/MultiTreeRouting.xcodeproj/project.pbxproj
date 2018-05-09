@@ -17,6 +17,8 @@
 		C0F62A612092560900107A22 /* DataAnalyser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0F62A5F2092560900107A22 /* DataAnalyser.cpp */; };
 		C0F62A64209AFB0900107A22 /* ConfigLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0F62A62209AFB0100107A22 /* ConfigLoader.cpp */; };
 		C0F62A66209DF2DA00107A22 /* Heuristic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0F62A65209DF2DA00107A22 /* Heuristic.cpp */; };
+		C0F62A6920A0CCB700107A22 /* CentroidHeuristic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0F62A6720A0CCB700107A22 /* CentroidHeuristic.cpp */; };
+		C0F62A6C20A0DCF100107A22 /* MedianHeuristic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0F62A6A20A0DCF100107A22 /* MedianHeuristic.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -56,6 +58,10 @@
 		C0F62A62209AFB0100107A22 /* ConfigLoader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigLoader.cpp; sourceTree = "<group>"; };
 		C0F62A63209AFB0500107A22 /* ConfigLoader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ConfigLoader.hpp; sourceTree = "<group>"; };
 		C0F62A65209DF2DA00107A22 /* Heuristic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Heuristic.cpp; sourceTree = "<group>"; };
+		C0F62A6720A0CCB700107A22 /* CentroidHeuristic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CentroidHeuristic.cpp; sourceTree = "<group>"; };
+		C0F62A6820A0CCB700107A22 /* CentroidHeuristic.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CentroidHeuristic.hpp; sourceTree = "<group>"; };
+		C0F62A6A20A0DCF100107A22 /* MedianHeuristic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MedianHeuristic.cpp; sourceTree = "<group>"; };
+		C0F62A6B20A0DCF100107A22 /* MedianHeuristic.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MedianHeuristic.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +96,10 @@
 			isa = PBXGroup;
 			children = (
 				C07C79F2203AD6EE0013BD00 /* main.cpp */,
+				C0F62A6A20A0DCF100107A22 /* MedianHeuristic.cpp */,
+				C0F62A6B20A0DCF100107A22 /* MedianHeuristic.hpp */,
+				C0F62A6720A0CCB700107A22 /* CentroidHeuristic.cpp */,
+				C0F62A6820A0CCB700107A22 /* CentroidHeuristic.hpp */,
 				C0F62A5F2092560900107A22 /* DataAnalyser.cpp */,
 				C0F62A602092560900107A22 /* DataAnalyser.hpp */,
 				C036A0D520625F35001F6C73 /* MatrixLoader.cpp */,
@@ -186,8 +196,10 @@
 				C036A0D720625F35001F6C73 /* MatrixLoader.cpp in Sources */,
 				C07C79F3203AD6EE0013BD00 /* main.cpp in Sources */,
 				C037269D205A740400AB4143 /* TreeWorker.cpp in Sources */,
+				C0F62A6C20A0DCF100107A22 /* MedianHeuristic.cpp in Sources */,
 				C0F62A64209AFB0900107A22 /* ConfigLoader.cpp in Sources */,
 				C037269A205861EC00AB4143 /* SimpleHeuristic.cpp in Sources */,
+				C0F62A6920A0CCB700107A22 /* CentroidHeuristic.cpp in Sources */,
 				C07C7A01204596590013BD00 /* GraphLoader.cpp in Sources */,
 				C036A0DA20628562001F6C73 /* CenterHeuristic.cpp in Sources */,
 			);
