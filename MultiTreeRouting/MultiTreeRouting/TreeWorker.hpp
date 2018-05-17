@@ -30,9 +30,11 @@ public:
     TreeWorker(const std::vector<int>& dV, const std::vector<int>& pV, const int rootNode, const Graph& graph);
     int lca(int node1, int node2);
     Congestion getCongestion();
+    std::vector<int> computeRealDistances();
     
 private:
     void addSubTrees(const int root, std::vector<std::set<int>>& trees);
+    void doRealDistances(const std::vector<std::set<int>>& children, std::vector<int>& distances, const int root, int levelcounter);
     const Graph& graph;
     const int rootNode;
     const std::vector<int>& distanceVector;

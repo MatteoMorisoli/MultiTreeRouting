@@ -101,3 +101,23 @@ void TreeWorker::addSubTrees(const int root, std::vector<std::set<int>>& trees){
         }
     }
 }
+
+std::vector<int> TreeWorker::computeRealDistances(){
+    std::vector<int> distances(predecessorVector.size());
+    std::vector<std::set<int>> children(predecessorVector.size());
+    for(int i = 0; i < predecessorVector.size(); ++i){
+        if(i != predecessorVector[i]){
+            children[predecessorVector[i]].insert(i);
+        }
+    }
+    doRealDistances(children, distances, rootNode, 0);
+    return distances;
+}
+
+void TreeWorker::doRealDistances(const std::vector<std::set<int>>& children,  std::vector<int> &distances, const int root, int levelcounter){
+    distances[root] = levelcounter;
+    ++levelcounter;
+    for(auto it = children[root].begin(); it != children[root].end(); ++it){
+        doRealDistances(children, distances, *it, levelcounter);
+    }
+}

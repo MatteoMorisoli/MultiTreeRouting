@@ -75,14 +75,16 @@ void DataAnalyser::addAndPrintCongestionData(diagMatrixFloat &sm, std::map<int, 
     std::vector<std::string> nonZeroStrings;
     for(int i = 0; i < sm.size1(); ++i){
         for(int j = i; j < sm.size2(); j++){
-            int num = ((int) sm(i, j) * 255 / (max));
+            int num = ((int) sm(i, j) * 255 * 2 / (max));
+            if(num > 255){
+                num = 255;
+            }
             std::stringstream s;
             s << "#" << std::hex << hex[num /16] << hex[num % 16] << "0000";
             std::string h(s.str());
-            if(sm(i, j) == 0){
-                //graph << i << " -- " << j << "[label=\"" << sm(i,j) << "\"" << ", color=\"" << h << "\", penwidth=3];\n";
-            }else{
-                graph << i << " -- " << j+1 << "[label=\"" << sm(i,j) << "\"" << ", color=\"" << h << "\", penwidth=3];\n";
+            if(sm(i, j) >= 1){
+                //graph << i << " -- " << j+1 << "[label=\"" << sm(i,j) << "\"" << ", color=\"" << h << "\", penwidth=3];\n";
+                graph << i << " -- " << j+1 << "[color=\"" << h << "\", penwidth=3];\n";
             }
         }
     }
@@ -149,17 +151,54 @@ void DataAnalyser::generateStretchFiles(){
 }
 
 void DataAnalyser::generateCongestionFiles(){
-    long double mean = sum / (long double) sizeCounter;
-    double max = DataAnalyser::valueOfIndex(valueMap, sizeCounter);
+    std::map<double, long> newMap = valueMap;
+    long newCounter = sizeCounter - valueMap[0];
+    newMap.erase(0);
+    long double median;
+    long double firstQuartile;
+    long double thirdQuartile;
+    double min = DataAnalyser::valueOfIndex(newMap, 0);
+    double max = DataAnalyser::valueOfIndex(newMap, newCounter);
+    long double mean = sum / (long double) newCounter;
+    if(newCounter % 2 == 0){
+        median = (DataAnalyser::valueOfIndex(newMap, newCounter/2) + valueOfIndex(newMap, newCounter/2 + 1)) / 2.0;
+        if(newCounter % 4 == 0){
+            firstQuartile = (DataAnalyser::valueOfIndex(newMap, newCounter/4) + DataAnalyser::valueOfIndex(newMap, newCounter/4 + 1)) / 2.0;
+            thirdQuartile = (DataAnalyser::valueOfIndex(newMap, 3 * newCounter/4) + DataAnalyser::valueOfIndex(newMap, 3 * newCounter/4 + 1)) / 2.0;
+        }else{
+            firstQuartile = valueOfIndex(newMap, newCounter/4 + 1);
+            thirdQuartile = valueOfIndex(newMap, 3 * newCounter/4 + 1);
+        }
+    }else{
+        median = valueOfIndex(newMap, newCounter/2 + 1);
+        if(newCounter % 4 == 0){
+            firstQuartile = (valueOfIndex(newMap, newCounter/4) + valueOfIndex(newMap, newCounter/4 + 1)) / 2.0;
+            thirdQuartile = (valueOfIndex(newMap, 3 * newCounter/4) + valueOfIndex(newMap, 3 * newCounter/4 + 1)) / 2.0;
+        }else{
+            firstQuartile = valueOfIndex(newMap, newCounter/4 + 1);
+            thirdQuartile = valueOfIndex(newMap, 3 * newCounter/4 + 1);
+        }
+    }
     std::size_t dotPos = filePath.find_last_of(".");
+    std::string refinedFilePath = filePath.substr(0, dotPos);
+    refinedFilePath.append(suffix);
+    refinedFilePath.append("refined.csv");
     std::string reviewFilePath = filePath.substr(0, dotPos);
     reviewFilePath.append(suffix);
     reviewFilePath.append("review.txt");
     std::string valueFilePath = filePath.substr(0, dotPos);
     valueFilePath.append(suffix);
     valueFilePath.append("value.txt");
+    std::ofstream refined(refinedFilePath);
+    refined << min << "," << firstQuartile << "," << median << "," << thirdQuartile << ","  << max;
+    refined.close();
     std::ofstream review(reviewFilePath);
     review << "The number of datapoints is: " << sizeCounter << std::endl;
+    review << "The number of non-zero datapoints is: " << newCounter << std::endl;
+    review << "The minimum is: " << min << std::endl;
+    review << "The first quartile is: " << firstQuartile << std::endl;
+    review << "The median is: " << median << std::endl;
+    review << "The third quartile is: " << thirdQuartile << std::endl;
     review << "The maximum is: " << max << std::endl;
     review << "The mean is: " << mean << std::endl;
     review << "The results are: " << std::endl;

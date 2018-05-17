@@ -36,8 +36,10 @@ using DiagMatrixInt = boost::numeric::ublas::triangular_matrix<int, boost::numer
 using DiagMatrixFloat = boost::numeric::ublas::triangular_matrix<float, boost::numeric::ublas::upper>;
 
 //prototype
-void computeTreeStretch(const int root, const Graph& g, const DiagMatrixInt &dm, DiagMatrixFloat &sm);
-void computeTreeCongestion(const int root, const Graph& g, DiagMatrixFloat &cm);
+void computeTreeStretch(const int root, Graph& g, const DiagMatrixInt &dm, DiagMatrixFloat &sm, const bool evo);
+void computeTreeCongestion(const int root, Graph& g, DiagMatrixFloat &cm, const bool evo);
+void increaseEdgeWeights(Graph& g, const std::vector<int>& parents);
+void resetEdgeWeights(Graph& g);
 
 
 /* Parameters for the main are the path of the file containing the graph, the number of trees to create on that graph,
@@ -49,14 +51,17 @@ int main(int argc, const char * argv[]) {
     std::vector<std::string> metrics = {"stretch", "congestion"};
     //d\Definitions of the parameters for ease of use
     ConfigLoader config(argv[1]);
+    bool evo = false;
+    if(config.getHeuristicId() > 3){
+        evo = true;
+    }
     std::string suffix = suffixes[config.getHeuristicId()];
     suffix.append(metrics[config.getMetricId()]);
     
     Graph graph;
     bool computedGraph = false;
-    
+    std::map<int, std::string> nameMapping;
     for(int a = 0; a < config.getExperiments(); ++a){
-        std::map<int, std::string> nameMapping;
         //Loading the graph from file and file creation as an adjacency list
         if(!computedGraph){GraphLoader g(config.getGraphPath());
 
@@ -132,17 +137,17 @@ int main(int argc, const char * argv[]) {
             //creation of the trees and of the relative distance matrices and stretch matrices
             Heuristic * h;
             bool graphNeeded = true;
-            if(config.getHeuristicId() == 0){
+            if((config.getHeuristicId() == 0) || (config.getHeuristicId() == 4)){
                 h = new SimpleHeuristic(vertexNum);
                 std::cout << "Heuristic chosen: center" << std::endl;
-            }else if(config.getHeuristicId() == 1){
+            }else if((config.getHeuristicId() == 1) || (config.getHeuristicId() == 5)){
                 h = new CenterHeuristic(vertexNum);
                 std::cout << "Heuristic chosen: random" << std::endl;
-            }else if(config.getHeuristicId() == 2){
+            }else if((config.getHeuristicId() == 2) || (config.getHeuristicId() == 6)){
                 h = new CentroidHeuristic(vertexNum);
                 graphNeeded = false;
                 std::cout << "Heuristic chosen: centroid" << std::endl;
-            }else if(config.getHeuristicId() == 3){
+            }else if((config.getHeuristicId() == 3) || (config.getHeuristicId() == 7)){
                 h = new MedianHeuristic(vertexNum);
                 graphNeeded = false;
                 std::cout << "Heuristic chosen: median" << std::endl;
@@ -157,7 +162,7 @@ int main(int argc, const char * argv[]) {
                     }else{
                         root = h->selectStartingNode(diagDistanceMatrix);
                     }
-                    computeTreeStretch(root, graph, diagDistanceMatrix, sm);
+                    computeTreeStretch(root, graph, diagDistanceMatrix, sm, evo);
                 }else if(config.getMetricId() == 1){
                     for(int k = 0; k < vertexNum - 1; ++k){
                         for(int j = k; j < vertexNum -1; ++j){
@@ -170,7 +175,7 @@ int main(int argc, const char * argv[]) {
                     }else{
                         root = h->selectStartingNode(diagDistanceMatrix);
                     }
-                    computeTreeCongestion(root, graph, sm);
+                    computeTreeCongestion(root, graph, sm, evo);
                 }
                 std::cout << "starting sum" << std::endl;
                 for(int y = 0; y < sm.size1(); ++y){
@@ -180,6 +185,9 @@ int main(int argc, const char * argv[]) {
                 }
                 //stretchStar += sm;
                 std::cout << "ended sum" << std::endl;
+            }
+            if(evo){
+                resetEdgeWeights(graph);
             }
             std::cout << "starting division" << std::endl;
             resultStar /= config.getTreeNumbers()[a];
@@ -224,7 +232,7 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 
-void computeTreeStretch(const int root, const Graph& g, const DiagMatrixInt &dm, DiagMatrixFloat &sm){
+void computeTreeStretch(const int root, Graph& g, const DiagMatrixInt &dm, DiagMatrixFloat &sm, const bool evo){
     std::cout << "starting tree with root " << root << "..." << std::endl;
     int vertexNum = num_vertices(g);
     std::vector<vertexDescriptor> parents(vertexNum); //necessary for dijkstra
@@ -232,18 +240,31 @@ void computeTreeStretch(const int root, const Graph& g, const DiagMatrixInt &dm,
     dijkstra_shortest_paths(g, root, predecessor_map(&parents[0]).distance_map(&distances[0]));
     std::vector<int> predecessors(parents.begin(), parents.end());
     TreeWorker t(distances, predecessors, root, g);
-    for(int i = 0; i < vertexNum-1; ++i) {
-                if(i % 1000 == 0){
-                    std::cout << ((double) i)/vertexNum*100.0 << "% tree with root " << root << std::endl;
-                }
-        for(int j = i; j < vertexNum-1; ++j) {
-                sm(i, j) = (distances[i] + distances[j+1] - 2 * distances[t.lca(i, j+1)]) / (float) dm(i, j);
+    if(evo){
+        std::vector<int> realDistances = t.computeRealDistances();
+        for(int i = 0; i < vertexNum-1; ++i) {
+            if(i % 1000 == 0){
+                std::cout << ((double) i)/vertexNum*100.0 << "% tree with root " << root << std::endl;
+            }
+            for(int j = i; j < vertexNum-1; ++j) {
+                sm(i, j) = (realDistances[i] + realDistances[j+1] - 2 * realDistances[t.lca(i, j+1)]) / (float) dm(i, j);
+            }
+        }
+        increaseEdgeWeights(g, predecessors);
+    }else{
+        for(int i = 0; i < vertexNum-1; ++i) {
+                    if(i % 1000 == 0){
+                        std::cout << ((double) i)/vertexNum*100.0 << "% tree with root " << root << std::endl;
+                    }
+            for(int j = i; j < vertexNum-1; ++j) {
+                    sm(i, j) = (distances[i] + distances[j+1] - 2 * distances[t.lca(i, j+1)]) / (float) dm(i, j);
+            }
         }
     }
     std::cout << "finished tree with root " << root << std::endl;
 }
 
-void computeTreeCongestion(const int root, const Graph& g, DiagMatrixFloat &cm){
+void computeTreeCongestion(const int root, Graph& g, DiagMatrixFloat &cm, const bool evo){
     int vertexNum = num_vertices(g);
     std::vector<vertexDescriptor> parents(vertexNum); //necessary for dijkstra
     std::vector<int> distances(vertexNum); //necessary for dijkstra
@@ -253,6 +274,29 @@ void computeTreeCongestion(const int root, const Graph& g, DiagMatrixFloat &cm){
     Congestion congestion = t.getCongestion();
     for(int i = 0; i < congestion.edges.size(); ++i){
         cm(congestion.edges[i].first, congestion.edges[i].second -1) = congestion.congestionValues[i];
+    }
+    if(evo){
+        increaseEdgeWeights(g, predecessors);
+    }
+}
+
+void increaseEdgeWeights(Graph& g, const std::vector<int>& parents){
+    std::cout << "increasing weights" << std::endl;
+    using edgeD = Graph::edge_descriptor;
+    for(int i = 0; i < parents.size(); ++i){
+        if(i != parents[i]){
+            std::pair<edgeD, bool> e = edge(i, parents[i], g);
+            int w = get(edge_weight_t(), g, e.first);
+            boost::put(boost::edge_weight_t(), g, e.first, w + 1);
+        }
+    }
+}
+
+void resetEdgeWeights(Graph& g){
+    std::cout << "resetting weights" << std::endl;
+    graph_traits<Graph>::edge_iterator eIt, eEnd;
+    for(tie(eIt, eEnd) = edges(g); eIt != eEnd; ++eIt){
+        boost::put(boost::edge_weight_t(), g, *eIt, 1);
     }
 }
 
