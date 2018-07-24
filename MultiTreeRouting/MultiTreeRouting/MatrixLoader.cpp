@@ -6,6 +6,8 @@
 //  Copyright © 2018 MatteoMorisoli. All rights reserved.
 //
 
+//TODO possibly merge with graphloader
+
 #include "MatrixLoader.hpp"
 
 MatrixLoader::MatrixLoader(std::string fileName){

@@ -12,6 +12,7 @@
 #include <boost/numeric/ublas/triangular.hpp>
 #include <boost/numeric/ublas/io.hpp>
 #include <boost/graph/johnson_all_pairs_shortest.hpp>
+#include <boost/graph/kruskal_min_spanning_tree.hpp>
 #include <iostream>
 #include <fstream>
 #include "GraphLoader.hpp"
@@ -42,25 +43,27 @@ void increaseEdgeWeights(Graph& g, const std::vector<int>& parents);
 void resetEdgeWeights(Graph& g);
 
 
-/* Parameters for the main are the path of the file containing the graph, the number of trees to create on that graph,
- the heuristic to use, identified with a integer, and the number of repetitions (use 1 if the selected heuristic is completely deterministic)
+/* The Parameter for the main is the path of the file containing the configuration informations
  */
 int main(int argc, const char * argv[]) {
     
-    std::vector<std::string> suffixes = {"random", "center", "centroid", "median", "randomEvo", "centerEvo", "centroidEvo", "medianEvo"};
+    std::vector<std::string> suffixes = {"random", "center", "centroid", "median", "randomEvo", "centerEvo", "centroidEvo", "medianEvo", "kruskal", "kruskalEvo"};
     std::vector<std::string> metrics = {"stretch", "congestion"};
-    //d\Definitions of the parameters for ease of use
+    //initialization of config object, and selection of evo boolean
     ConfigLoader config(argv[1]);
     bool evo = false;
-    if(config.getHeuristicId() > 3){
+    if(config.getHeuristicId() > 4 || config.getHeuristicId() == 9){
         evo = true;
     }
+    //selecting correct suffix for file naming
     std::string suffix = suffixes[config.getHeuristicId()];
     suffix.append(metrics[config.getMetricId()]);
     
+    //graph declaration
     Graph graph;
     bool computedGraph = false;
     std::map<int, std::string> nameMapping;
+    //main loop for all experiments in configuration
     for(int a = 0; a < config.getExperiments(); ++a){
         //Loading the graph from file and file creation as an adjacency list
         if(!computedGraph){GraphLoader g(config.getGraphPath());
@@ -116,7 +119,7 @@ int main(int argc, const char * argv[]) {
         std::cout << "all-pairs smart matrix ready!" << std::endl;
         
         
-        //heuristic for starting node selection
+        //setup of the matrices to store results
         DiagMatrixFloat resultStarStar(vertexNum-1, vertexNum-1);
         DiagMatrixFloat resultStar(vertexNum-1, vertexNum-1);
         for(int i = 0; i < vertexNum - 1; ++i){
@@ -125,6 +128,7 @@ int main(int argc, const char * argv[]) {
                 resultStar(i, j) = 0;
             }
         }
+        //for all repetitions in configuration
         DataAnalyser dAll(config.getGraphPath(), suffix, false, config.getTreeNumbers()[a]);
         for(int i = 0; i < config.getRepetitions(); ++i){
             for(int k = 0; k < vertexNum - 1; ++k){
@@ -133,16 +137,15 @@ int main(int argc, const char * argv[]) {
                 }
             }
             std::cout << "starting repetition " << i+1 << " of " << config.getRepetitions() << "..." << std::endl;
-            //std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-            //creation of the trees and of the relative distance matrices and stretch matrices
+            //heuristic selection
             Heuristic * h;
             bool graphNeeded = true;
             if((config.getHeuristicId() == 0) || (config.getHeuristicId() == 4)){
                 h = new SimpleHeuristic(vertexNum);
-                std::cout << "Heuristic chosen: center" << std::endl;
+                std::cout << "Heuristic chosen: random" << std::endl;
             }else if((config.getHeuristicId() == 1) || (config.getHeuristicId() == 5)){
                 h = new CenterHeuristic(vertexNum);
-                std::cout << "Heuristic chosen: random" << std::endl;
+                std::cout << "Heuristic chosen: center" << std::endl;
             }else if((config.getHeuristicId() == 2) || (config.getHeuristicId() == 6)){
                 h = new CentroidHeuristic(vertexNum);
                 graphNeeded = false;
@@ -154,6 +157,7 @@ int main(int argc, const char * argv[]) {
             }
             //StretchMatrix stretchStar(vertexNum, vertexNum, 0);
             DiagMatrixFloat sm(vertexNum-1, vertexNum-1);
+            //for all trees in selected experiment for this repetition in configuration
             for(int x=0; x < config.getTreeNumbers()[a]; ++x){
                 if(config.getMetricId() == 0){
                     int root;
@@ -183,9 +187,9 @@ int main(int argc, const char * argv[]) {
                         resultStar(y, z) += sm(y,z);
                     }
                 }
-                //stretchStar += sm;
                 std::cout << "ended sum" << std::endl;
             }
+            //reset edge weights at the end of current repetition
             if(evo){
                 resetEdgeWeights(graph);
             }
@@ -207,7 +211,6 @@ int main(int argc, const char * argv[]) {
                     resultStarStar(y, z) += resultStar(y,z);
                 }
             }
-            //stretchStarStar += stretchStar;
             std::cout << "ended sum" << std::endl;
             std::cout << "repetition " << i+1 << " done!" << std::endl;
         }
@@ -232,6 +235,38 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 
+//void computeTreeStretch(const int root, Graph& g, const DiagMatrixInt &dm, DiagMatrixFloat &sm, const bool evo){
+//    std::cout << "starting tree with root " << root << "..." << std::endl;
+//    int vertexNum = num_vertices(g);
+//    std::vector<vertexDescriptor> parents(vertexNum); //necessary for dijkstra
+//    std::vector<int> distances(vertexNum); //necessary for dijkstra
+//    dijkstra_shortest_paths(g, root, predecessor_map(&parents[0]).distance_map(&distances[0]));
+//    std::vector<int> predecessors(parents.begin(), parents.end());
+//    TreeWorker t(distances, predecessors, root, g);
+//    if(evo){
+//        std::vector<int> realDistances = t.computeRealDistances();
+//        for(int i = 0; i < vertexNum-1; ++i) {
+//            if(i % 1000 == 0){
+//                std::cout << ((double) i)/vertexNum*100.0 << "% tree with root " << root << std::endl;
+//            }
+//            for(int j = i; j < vertexNum-1; ++j) {
+//                sm(i, j) = (realDistances[i] + realDistances[j+1] - 2 * realDistances[t.lca(i, j+1)]) / (float) dm(i, j);
+//            }
+//        }
+//        increaseEdgeWeights(g, predecessors);
+//    }else{
+//        for(int i = 0; i < vertexNum-1; ++i) {
+//                    if(i % 1000 == 0){
+//                        std::cout << ((double) i)/vertexNum*100.0 << "% tree with root " << root << std::endl;
+//                    }
+//            for(int j = i; j < vertexNum-1; ++j) {
+//                    sm(i, j) = (distances[i] + distances[j+1] - 2 * distances[t.lca(i, j+1)]) / (float) dm(i, j);
+//            }
+//        }
+//    }
+//    std::cout << "finished tree with root " << root << std::endl;
+//}
+
 void computeTreeStretch(const int root, Graph& g, const DiagMatrixInt &dm, DiagMatrixFloat &sm, const bool evo){
     std::cout << "starting tree with root " << root << "..." << std::endl;
     int vertexNum = num_vertices(g);
@@ -247,17 +282,17 @@ void computeTreeStretch(const int root, Graph& g, const DiagMatrixInt &dm, DiagM
                 std::cout << ((double) i)/vertexNum*100.0 << "% tree with root " << root << std::endl;
             }
             for(int j = i; j < vertexNum-1; ++j) {
-                sm(i, j) = (realDistances[i] + realDistances[j+1] - 2 * realDistances[t.lca(i, j+1)]) / (float) dm(i, j);
+                sm(i, j) = (realDistances[i] + realDistances[j+1] - 2 * realDistances[t.optimizedLca(i, j+1)]) / (float) dm(i, j);
             }
         }
         increaseEdgeWeights(g, predecessors);
     }else{
         for(int i = 0; i < vertexNum-1; ++i) {
-                    if(i % 1000 == 0){
-                        std::cout << ((double) i)/vertexNum*100.0 << "% tree with root " << root << std::endl;
-                    }
+            if(i % 1000 == 0){
+                std::cout << ((double) i)/vertexNum*100.0 << "% tree with root " << root << std::endl;
+            }
             for(int j = i; j < vertexNum-1; ++j) {
-                    sm(i, j) = (distances[i] + distances[j+1] - 2 * distances[t.lca(i, j+1)]) / (float) dm(i, j);
+                sm(i, j) = (distances[i] + distances[j+1] - 2 * distances[t.optimizedLca(i, j+1)]) / (float) dm(i, j);
             }
         }
     }

@@ -6,6 +6,8 @@
 //  Copyright © 2018 MatteoMorisoli. All rights reserved.
 //
 
+//TODO total refactor, add matrix loading here, make more flexible
+
 #include "GraphLoader.hpp"
 
 //constructor, opens the file and load the graph in the object

@@ -8,6 +8,7 @@
 
 #include "ConfigLoader.hpp"
 
+//TODO Create separate method so that it can be changed in case of new interface
 ConfigLoader::ConfigLoader(std::string filePath){
     std::ifstream readFile(filePath);
     std::string line;

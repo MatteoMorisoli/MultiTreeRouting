@@ -8,8 +8,14 @@
 
 #include "TreeWorker.hpp"
 
+//TODO rename, specify better the function of the class
 //constructor
-TreeWorker::TreeWorker(const std::vector<int>& dV, const std::vector<int>& pV, const int rootNode, const Graph& graph): distanceVector(dV), predecessorVector(pV), rootNode(rootNode), graph(graph){
+TreeWorker::TreeWorker(const std::vector<int>& dV, const std::vector<int>& pV, const int rootNode, const Graph& graph): distanceVector(dV), predecessorVector(pV), rootNode(rootNode), graph(graph), sparseTable(predecessorVector.size(), std::vector<int>(((int) log2(pV.size())) + 1, -1)){
+    preprocessingLca();
+    int max_distance = *std::max_element(dV.begin(), dV.end());
+    for(int i = 0; i < max_distance + 1 ; i++){
+        computedLogs.push_back(log2_fast(i));
+    }
 }
 
 //finds the lowest common ancestor between the two given nodes node1 and node2, returns the int of the ancestor
@@ -47,6 +53,63 @@ int TreeWorker::lca(int node1, int node2){
     }
     return newNode1;
     
+}
+
+void TreeWorker::preprocessingLca(){
+    for(int i = 0; i < sparseTable.size(); i++){
+        if( predecessorVector[i] != i){
+            sparseTable[i][0] = predecessorVector[i];
+        }
+    }
+    
+    for(int j = 1; (1 << j) < sparseTable.size(); j++){
+        for(int i = 0; i < sparseTable.size(); i++){
+            if(sparseTable[i][j-1] != -1){
+                sparseTable[i][j] = sparseTable[sparseTable[i][j-1]][j-1];
+            }
+        }
+    }
+    
+}
+
+int TreeWorker::log2_fast(int d) {
+    int result;
+    std::frexp(d, &result);
+    return result-1;
+}
+
+int TreeWorker::optimizedLca(int node1, int node2){
+    int distance;
+    int distanceLog;
+    if(distanceVector[node1] > distanceVector[node2]){
+        distance = distanceVector[node1] - distanceVector[node2];
+        while(distance > 0){
+            distanceLog = computedLogs[distance];
+            node1 = sparseTable[node1][distanceLog];
+            int distanceLogSquared = 1 << distanceLog;
+            distance -= distanceLogSquared;
+        }
+    }else if(distanceVector[node2] > distanceVector[node1]){
+        distance = distanceVector[node2] - distanceVector[node1];
+        while(distance > 0){
+            distanceLog = computedLogs[distance];
+            node2 = sparseTable[node2][distanceLog];
+            int distanceLogSquared = 1 << distanceLog;
+            distance -= distanceLogSquared;
+        }
+    }
+    
+    if(node1 == node2){
+        return node1;
+    }
+    int maxLog = (int) log2_fast(sparseTable.size());
+    for(int i = maxLog; i >= 0; i--){
+        if((sparseTable[node1][i] != -1) && (sparseTable[node1][i] != sparseTable[node2][i])){
+            node1 = sparseTable[node1][i];
+            node2 = sparseTable[node2][i];
+        }
+    }
+    return predecessorVector[node1];
 }
 
 //compute the congestion value for each edge of the tree
